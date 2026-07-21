@@ -236,7 +236,9 @@ textarea:focus-visible {
    ========================================================= */
 .hero {
   position: relative;
-  height: 100svh;
+  height: 100vh;   /* repli navigateurs anciens */
+  height: 100svh;  /* repli sûr : jamais plus grand que le viewport le plus petit possible */
+  height: 100dvh;  /* hauteur réelle, mise à jour en direct quand la barre d'adresse apparaît/disparaît — élimine tout écart qui laisserait voir le bandeau en dessous */
   overflow: hidden;
   background: var(--bg);
 }

@@ -134,27 +134,33 @@ function initHeroScene(canvas) {
       const targetSize = 2.6;
       model.scale.setScalar(targetSize / maxDim);
 
-      // 2) Recentre sur le vrai centre de gravité (centroïde géométrique :
-      // moyenne de tous les sommets), pas sur le centre de la boîte
-      // englobante. Pour une forme asymétrique comme cette flamme (la
-      // "mèche" qui part sur le côté), le centre de la boîte et le centre
-      // de masse visuel peuvent être nettement différents — c'est ce qui
-      // donnait l'impression que la rotation ne tournait pas "sur elle-même".
-      const centroid = computeVertexCentroid(model);
-      model.position.sub(centroid);
+      // 2) Recentre le modèle sur le centre de sa boîte englobante — son
+      // vrai centre géométrique/visuel (min/max sur chaque axe), pas une
+      // moyenne de sommets qui peut être tirée d'un côté si le maillage a
+      // plus de détail (donc plus de sommets) à un endroit qu'à un autre.
+      // La caméra regardant TOUJOURS pile son pivot (controls.target,
+      // resté à l'origine), ce point projette par construction en plein
+      // centre de l'écran — donc si ce pivot est le vrai centre visuel de
+      // la forme, la flamme reste visuellement centrée à tous les angles,
+      // sans le moindre calcul à chaque frame.
+      const box = new THREE.Box3().setFromObject(model);
+      const boxCenter = new THREE.Vector3();
+      box.getCenter(boxCenter);
+      model.position.sub(boxCenter);
 
       flameGroup.add(model);
 
       // 3) Rayon englobant final, mesuré depuis l'origine (0,0,0) — qui est
-      // exactement le centroïde/pivot ci-dessus. On prend la distance au
-      // sommet le plus éloigné plutôt que la sphère englobante de la boîte
-      // (laquelle est centrée sur le milieu de la boîte, pas sur le
-      // centroïde) : ça garantit que le cadrage caméra reste cohérent avec
-      // le point sur lequel l'objet tourne réellement.
+      // exactement le centre ci-dessus. On prend la distance au sommet le
+      // plus éloigné plutôt que la sphère englobante de la boîte (laquelle
+      // est centrée sur le milieu de la boîte, pas forcément l'origine si
+      // jamais il y avait un écart) : ça garantit que le cadrage caméra
+      // reste cohérent avec le point sur lequel l'objet tourne réellement.
       flameRadius = computeMaxRadiusFromOrigin(flameGroup);
 
       fitCameraToFlame();
       controls.update();
+      resize();
     },
     undefined,
     (err) => {
@@ -220,15 +226,28 @@ function initHeroScene(canvas) {
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     fitCameraToFlame();
+    camera.clearViewOffset();
+    camera.updateProjectionMatrix();
 
-    // Décale la scène entière (flamme + fumée, ensemble) vers le haut et
-    // légèrement vers la droite, pour la position finale demandée. C'est un
-    // vrai décalage de la fenêtre de projection (`setViewOffset`), pas un
-    // transform CSS sur le canevas : la fumée continue donc de couvrir tout
-    // le cadre jusqu'en bas, sans jamais révéler le bord du rendu.
-    const shiftX = -w * 0.0344;
-    const shiftY = h * 0.133;
-    camera.setViewOffset(w, h, shiftX, shiftY, w, h);
+    // Le pivot de la flamme (controls.target, à l'origine) est maintenant
+    // le centre de sa boîte englobante (voir plus haut) — et la caméra
+    // regardant TOUJOURS pile ce point, il projette par construction en
+    // plein centre du cadre (w/2, h/2), à N'IMPORTE QUEL angle de
+    // rotation. Donc pas de décalage horizontal à calculer : elle est
+    // structurellement centrée. Il ne reste qu'à décaler VERTICALEMENT
+    // pour caler ce centre dans l'espace vide entre la nav (haut) et le
+    // bloc "PORTFOLIO" (bas), avec le même espace au-dessus et en dessous.
+    const navEl = document.querySelector(".nav");
+    const textEl = document.querySelector(".hero__text");
+    let shiftY = 0;
+    if (navEl && textEl) {
+      const navBottom = navEl.getBoundingClientRect().bottom;
+      const textTop = textEl.getBoundingClientRect().top;
+      const gapCenter = (navBottom + textTop) / 2 - rect.top;
+      shiftY = h / 2 - gapCenter;
+    }
+
+    camera.setViewOffset(w, h, 0, shiftY, w, h);
     camera.updateProjectionMatrix();
 
     const drawSize = renderer.getDrawingBufferSize(new THREE.Vector2());
@@ -239,6 +258,10 @@ function initHeroScene(canvas) {
   }
   resize();
   window.addEventListener("resize", resize);
+  window.addEventListener("load", resize);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(resize);
+  }
 
   // ---------- Boucle d'animation ----------
   const clock = new THREE.Clock();
@@ -277,33 +300,6 @@ function computeMaxRadiusFromOrigin(object) {
   });
 
   return Math.sqrt(maxDistSq) || 1.4;
-}
-
-/**
- * Centroïde géométrique d'un objet : moyenne de la position (monde) de
- * tous les sommets de tous ses meshes. Contrairement au centre de la
- * boîte englobante (Box3.getCenter), ce point suit la répartition réelle
- * de la géométrie — donc plus représentatif du "centre de gravité" visuel
- * pour une forme asymétrique, et un meilleur pivot de rotation.
- */
-function computeVertexCentroid(object) {
-  const sum = new THREE.Vector3();
-  const v = new THREE.Vector3();
-  let count = 0;
-
-  object.updateWorldMatrix(true, true);
-  object.traverse((child) => {
-    if (!child.isMesh || !child.geometry) return;
-    const position = child.geometry.attributes.position;
-    if (!position) return;
-    for (let i = 0; i < position.count; i++) {
-      v.fromBufferAttribute(position, i).applyMatrix4(child.matrixWorld);
-      sum.add(v);
-      count++;
-    }
-  });
-
-  return count > 0 ? sum.divideScalar(count) : new THREE.Vector3();
 }
 
 /**
