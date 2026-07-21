@@ -7,6 +7,21 @@
  *   - envoi du formulaire de contact
  */
 
+// ---------- Hauteur de viewport fiable (--vh) ----------
+// `100dvh` en CSS pur devrait suivre en direct la barre d'outils de Safari
+// iOS, mais dans les faits ce n'est pas toujours fiable (bug connu) : la
+// hauteur ne se recalcule pas toujours correctement, ce qui laisse voir un
+// bout du bandeau qui défile sous le hero. Solution robuste standard : on
+// mesure la vraie hauteur visible via `window.innerHeight` en JS, et on la
+// réinjecte comme variable CSS — recalculée à chaque resize (Safari déclenche
+// bien un `resize` quand sa barre d'outils apparaît/disparaît).
+function setViewportHeightVar() {
+  document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
+}
+setViewportHeightVar();
+window.addEventListener("resize", setViewportHeightVar);
+window.addEventListener("orientationchange", setViewportHeightVar);
+
 // ---------- Titres pleine largeur ("PORTFOLIO", "GRAPHIC DESIGNER") ----------
 // La police Edition a des métriques particulières (glyphes assez étroits) :
 // plutôt que de deviner une taille en CSS, on mesure le texte réellement

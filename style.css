@@ -238,7 +238,8 @@ textarea:focus-visible {
   position: relative;
   height: 100vh;   /* repli navigateurs anciens */
   height: 100svh;  /* repli sûr : jamais plus grand que le viewport le plus petit possible */
-  height: 100dvh;  /* hauteur réelle, mise à jour en direct quand la barre d'adresse apparaît/disparaît — élimine tout écart qui laisserait voir le bandeau en dessous */
+  height: 100dvh;  /* repli : hauteur réelle, en théorie mise à jour en direct... */
+  height: calc(var(--vh, 1vh) * 100); /* ...mais peu fiable sur Safari iOS (bug connu) : cette version, pilotée en JS via window.innerHeight (voir main.js), est la plus robuste et prend le dessus */
   overflow: hidden;
   background: var(--bg);
 }
