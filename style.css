@@ -236,10 +236,13 @@ textarea:focus-visible {
    ========================================================= */
 .hero {
   position: relative;
-  height: 100vh;   /* repli navigateurs anciens */
-  height: 100svh;  /* repli sûr : jamais plus grand que le viewport le plus petit possible */
-  height: 100dvh;  /* repli : hauteur réelle, en théorie mise à jour en direct... */
-  height: calc(var(--vh, 1vh) * 100); /* ...mais peu fiable sur Safari iOS (bug connu) : cette version, pilotée en JS via window.innerHeight (voir main.js), est la plus robuste et prend le dessus */
+  /* Volontairement un peu moins que 100% de la hauteur d'écran : ça laisse
+     dépasser le haut du bandeau "services" (.marquee) tout en bas de l'écran
+     au premier affichage, comme indice visuel qu'il y a du contenu à suivre. */
+  height: 86vh;   /* repli navigateurs anciens */
+  height: 86svh;  /* repli sûr : jamais plus grand que le viewport le plus petit possible */
+  height: 86dvh;  /* repli : hauteur réelle, en théorie mise à jour en direct... */
+  height: calc(var(--vh, 1vh) * 86); /* ...mais peu fiable sur Safari iOS (bug connu) : cette version, pilotée en JS via window.innerHeight (voir main.js), est la plus robuste et prend le dessus */
   overflow: hidden;
   background: var(--bg);
 }
@@ -274,7 +277,7 @@ textarea:focus-visible {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: clamp(28px, 6vh, 56px);
+  bottom: clamp(10px, 2.5vh, 24px);
   z-index: 2;
   display: flex;
   flex-direction: column;
