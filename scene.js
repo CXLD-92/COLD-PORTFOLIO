@@ -211,8 +211,9 @@ function initHeroScene(canvas) {
   //   - "foreground" : un voile très léger devant la flamme, entre elle et
   //     le texte, pour plus d'immersion (comme si on regardait la flamme
   //     à travers un peu de fumée).
-  const smokeBack = buildSmoke({ distance: 18, scale: 46, density: 0.85, speed: 1.0 });
-  const smokeFront = buildSmoke({ distance: 3.4, scale: 9, density: 0.272, speed: 1.35 });
+  const smokeNoiseTex = buildNoiseTexture();
+  const smokeBack = buildSmoke({ distance: 18, scale: 46, density: 0.85, speed: 1.0, noiseTex: smokeNoiseTex });
+  const smokeFront = buildSmoke({ distance: 3.4, scale: 9, density: 0.272, speed: 1.35, noiseTex: smokeNoiseTex });
   camera.add(smokeBack.mesh);
   camera.add(smokeFront.mesh);
   scene.add(camera); // une caméra doit être dans la scène pour que ses enfants soient rendus
@@ -454,7 +455,68 @@ function buildStudioEnvironment(renderer) {
  * @param {number} density    multiplicateur d'opacité global (0–1).
  * @param {number} speed      multiplicateur de vitesse de défilement.
  */
-function buildSmoke({ distance = 18, scale = 46, density = 1, speed = 1 } = {}) {
+/**
+ * Texture de bruit (valeurs aléatoires en niveaux de gris, 256×256, bouclée
+ * — RepeatWrapping) utilisée par le shader de fumée ci-dessous à la place
+ * d'un hash mathématique.
+ *
+ * L'ancienne version calculait le bruit avec `fract(p * 123.34)` et
+ * consorts : ces grands multiplicateurs, une fois combinés à la profondeur
+ * du domain-warping (5 octaves imbriquées), poussent les valeurs
+ * intermédiaires bien au-delà de ce qu'un flottant `mediump` peut encoder
+ * avec assez de précision pour que `fract()` reste fiable — beaucoup de GPU
+ * Android n'offrent en réalité que `mediump` en fragment shader, quoi qu'on
+ * déclare en tête de shader. Résultat : le bruit dégénère en blocs plats
+ * plutôt qu'en volutes fines (le bug visible sur Android).
+ *
+ * En passant par une texture, l'interpolation (l'équivalent du lissage
+ * qu'on codait à la main) est faite par le matériel de filtrage bilinéaire
+ * du GPU, indépendamment de la précision flottante des calculs du shader —
+ * donc fiable sur tous les appareils. Comme pour l'environnement chromé
+ * plus haut, le bruit est généré avec un PRNG à graine fixe (même rendu à
+ * chaque chargement), pas un `Math.random()`.
+ */
+function buildNoiseTexture() {
+  const size = 256;
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  const imgData = ctx.createImageData(size, size);
+
+  let seed = 9731;
+  const rand = () => {
+    seed = (seed * 16807) % 2147483647;
+    return seed / 2147483647;
+  };
+
+  for (let i = 0; i < imgData.data.length; i += 4) {
+    const v = Math.floor(rand() * 256);
+    imgData.data[i] = v;
+    imgData.data[i + 1] = v;
+    imgData.data[i + 2] = v;
+    imgData.data[i + 3] = 255;
+  }
+  ctx.putImageData(imgData, 0, 0);
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.RepeatWrapping;
+  tex.magFilter = THREE.LinearFilter;
+  tex.minFilter = THREE.LinearFilter;
+  tex.generateMipmaps = false;
+  // C'est une texture de données (valeurs brutes lues dans le shader), pas
+  // une couleur à afficher : on désactive la conversion sRGB pour ne pas
+  // fausser les valeurs — selon la version de three.js chargée.
+  if (typeof THREE.NoColorSpace !== "undefined") {
+    tex.colorSpace = THREE.NoColorSpace;
+  } else if (typeof THREE.LinearEncoding !== "undefined") {
+    tex.encoding = THREE.LinearEncoding;
+  }
+  return tex;
+}
+
+function buildSmoke({ distance = 18, scale = 46, density = 1, speed = 1, noiseTex } = {}) {
   const geometry = new THREE.PlaneGeometry(1, 1);
   const material = new THREE.ShaderMaterial({
     transparent: true,
@@ -466,6 +528,7 @@ function buildSmoke({ distance = 18, scale = 46, density = 1, speed = 1 } = {}) 
       uResolution: { value: new THREE.Vector2(1, 1) },
       uDensity: { value: density },
       uSpeed: { value: speed },
+      uNoiseTex: { value: noiseTex },
     },
     vertexShader: /* glsl */ `
       varying vec2 vUv;
@@ -482,22 +545,15 @@ function buildSmoke({ distance = 18, scale = 46, density = 1, speed = 1 } = {}) 
       uniform vec2 uResolution;
       uniform float uDensity;
       uniform float uSpeed;
+      uniform sampler2D uNoiseTex;
 
-      float hash(vec2 p) {
-        p = fract(p * vec2(123.34, 456.21));
-        p += dot(p, p + 45.32);
-        return fract(p.x * p.y);
-      }
-
+      // Bruit "valeur" lu dans une texture pré-générée (256x256, bouclée)
+      // plutôt que calculé par un hash algébrique — voir buildNoiseTexture()
+      // plus haut dans le fichier pour le pourquoi (précision flottante des
+      // GPU Android). Le filtrage bilinéaire de la texture fait tout le
+      // travail de lissage entre "cellules" à la place de nos anciens mix().
       float noise(vec2 p) {
-        vec2 i = floor(p);
-        vec2 f = fract(p);
-        float a = hash(i);
-        float b = hash(i + vec2(1.0, 0.0));
-        float c = hash(i + vec2(0.0, 1.0));
-        float d = hash(i + vec2(1.0, 1.0));
-        vec2 u = f * f * (3.0 - 2.0 * f);
-        return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+        return texture2D(uNoiseTex, p / 256.0).r;
       }
 
       float fbm(vec2 p) {
@@ -514,22 +570,10 @@ function buildSmoke({ distance = 18, scale = 46, density = 1, speed = 1 } = {}) 
       void main() {
         vec2 uv = vec2(vUv.x * uAspect, vUv.y);
 
-        // Le hash procédural ci-dessus (fract(p * grands nombres)) perd sa
-        // précision quand p devient grand — imperceptible sur les GPU qui
-        // honorent vraiment highp en fragment shader (desktop, iOS/Metal),
-        // mais beaucoup de GPU Android ne supportent en réalité que
-        // mediump en fragment shader (environ 10 bits de mantisse) quoi
-        // qu'on déclare en tête de shader : au bout de quelques dizaines de
-        // secondes, uTime (qui grandit sans fin) fait sortir p de la zone
-        // sûre et le bruit dégénère en blocs/artefacts géométriques au lieu
-        // de volutes lisses. On reboucle donc le temps sur une fenêtre large
-        // mais bornée pour que p ne dérive jamais hors de cette zone sûre.
-        float tw = mod(uTime, 600.0);
-
         // Défilement continu vers la droite (décalage pur : boucle infinie,
         // aucune couture possible, contrairement à une texture/vidéo finie).
-        float drift = tw * 0.045 * uSpeed;
-        vec2 p = uv * vec2(1.7, 2.1) + vec2(-drift, tw * 0.01 * uSpeed);
+        float drift = uTime * 0.045 * uSpeed;
+        vec2 p = uv * vec2(1.7, 2.1) + vec2(-drift, uTime * 0.01 * uSpeed);
 
         // "Domain warping" : on déforme l'espace d'échantillonnage par du
         // bruit lui-même animé, ce qui donne ces volutes organiques plutôt
