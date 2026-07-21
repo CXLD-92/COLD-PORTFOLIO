@@ -13,8 +13,8 @@
  */
 
 import * as THREE from "three";
-import { GLTFLoader } from "../assets/vendor/three/examples/jsm/loaders/GLTFLoader.js";
-import { OrbitControls } from "../assets/vendor/three/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from "./assets/vendor/three/examples/jsm/loaders/GLTFLoader.js";
+import { OrbitControls } from "./assets/vendor/three/examples/jsm/controls/OrbitControls.js";
 
 const canvas = document.getElementById("flame-canvas");
 if (canvas) {

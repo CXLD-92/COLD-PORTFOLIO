@@ -4,59 +4,59 @@
    ========================================================= */
 @font-face {
   font-family: "Edition";
-  src: url("../assets/fonts/edition-regular.woff2") format("woff2");
+  src: url("assets/fonts/edition-regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Pressio";
-  src: url("../assets/fonts/pressio-regular.woff2") format("woff2");
+  src: url("assets/fonts/pressio-regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Oswald";
-  src: url("../assets/fonts/oswald-variable.woff2") format("woff2-variations"),
-       url("../assets/fonts/oswald-regular.woff2") format("woff2");
+  src: url("assets/fonts/oswald-variable.woff2") format("woff2-variations"),
+       url("assets/fonts/oswald-regular.woff2") format("woff2");
   font-weight: 200 700;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Oswald";
-  src: url("../assets/fonts/oswald-extralight.woff2") format("woff2");
+  src: url("assets/fonts/oswald-extralight.woff2") format("woff2");
   font-weight: 200;
   font-display: swap;
 }
 @font-face {
   font-family: "Oswald";
-  src: url("../assets/fonts/oswald-light.woff2") format("woff2");
+  src: url("assets/fonts/oswald-light.woff2") format("woff2");
   font-weight: 300;
   font-display: swap;
 }
 @font-face {
   font-family: "Oswald";
-  src: url("../assets/fonts/oswald-regular.woff2") format("woff2");
+  src: url("assets/fonts/oswald-regular.woff2") format("woff2");
   font-weight: 400;
   font-display: swap;
 }
 @font-face {
   font-family: "Oswald";
-  src: url("../assets/fonts/oswald-medium.woff2") format("woff2");
+  src: url("assets/fonts/oswald-medium.woff2") format("woff2");
   font-weight: 500;
   font-display: swap;
 }
 @font-face {
   font-family: "Oswald";
-  src: url("../assets/fonts/oswald-semibold.woff2") format("woff2");
+  src: url("assets/fonts/oswald-semibold.woff2") format("woff2");
   font-weight: 600;
   font-display: swap;
 }
 @font-face {
   font-family: "Oswald";
-  src: url("../assets/fonts/oswald-bold.woff2") format("woff2");
+  src: url("assets/fonts/oswald-bold.woff2") format("woff2");
   font-weight: 700;
   font-display: swap;
 }
@@ -451,7 +451,7 @@ textarea:focus-visible {
   flex: 1 1 auto;
   height: 1px;
   min-width: 24px;
-  background: linear-gradient(to right, transparent, var(--line) 85%, var(--line));
+  background: linear-gradient(to right, transparent, var(--ink) 85%, var(--ink));
 }
 .about__inquiries-right {
   display: flex;
@@ -467,14 +467,14 @@ textarea:focus-visible {
 .about__inquiries-divider {
   width: 1px;
   height: 18px;
-  background: var(--line);
+  background: var(--ink);
   flex-shrink: 0;
 }
 .about__inquiries-text {
-  font-family: var(--font-ui);
-  font-weight: 700;
-  font-size: clamp(13px, 1.6vw, 15px);
-  letter-spacing: 0.14em;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(14px, 1.8vw, 17px);
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink);
   white-space: nowrap;
