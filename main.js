@@ -11,16 +11,33 @@
 // `100dvh` en CSS pur devrait suivre en direct la barre d'outils de Safari
 // iOS, mais dans les faits ce n'est pas toujours fiable (bug connu) : la
 // hauteur ne se recalcule pas toujours correctement, ce qui laisse voir un
-// bout du bandeau qui défile sous le hero. Solution robuste standard : on
-// mesure la vraie hauteur visible via `window.innerHeight` en JS, et on la
-// réinjecte comme variable CSS — recalculée à chaque resize (Safari déclenche
-// bien un `resize` quand sa barre d'outils apparaît/disparaît).
+// bout du bandeau qui défile sous le hero. On mesure donc la vraie hauteur
+// visible en JS et on la réinjecte comme variable CSS.
+//
+// `window.innerHeight` seul ne suffit pas : au tout premier rendu sur iOS
+// Safari, la barre d'outils est encore en train de se rétracter et
+// `innerHeight` peut être capturé *avant* la fin de cette animation — le
+// hero se calcule alors un peu trop court, laissant apparaître le haut du
+// bandeau en dessous. `window.visualViewport` est l'API pensée pour ce cas
+// précis : elle reflète la hauteur réellement visible et émet ses propres
+// événements `resize`/`scroll` quand la barre d'outils bouge, donc on
+// l'utilise en priorité (avec repli sur `innerHeight` si absente).
 function setViewportHeightVar() {
-  document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
+  const vv = window.visualViewport;
+  const h = vv ? vv.height : window.innerHeight;
+  document.documentElement.style.setProperty("--vh", `${h * 0.01}px`);
 }
 setViewportHeightVar();
 window.addEventListener("resize", setViewportHeightVar);
 window.addEventListener("orientationchange", setViewportHeightVar);
+if (window.visualViewport) {
+  window.visualViewport.addEventListener("resize", setViewportHeightVar);
+  window.visualViewport.addEventListener("scroll", setViewportHeightVar);
+}
+// Filet de sécurité : sur certains iPhone, l'animation de la barre d'outils
+// se termine légèrement après les événements ci-dessus. Un recalcul différé
+// juste après le chargement rattrape ce dernier cas.
+window.addEventListener("load", () => setTimeout(setViewportHeightVar, 300));
 
 // ---------- Titres pleine largeur ("PORTFOLIO", "GRAPHIC DESIGNER") ----------
 // La police Edition a des métriques particulières (glyphes assez étroits) :
