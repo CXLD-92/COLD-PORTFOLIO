@@ -274,7 +274,7 @@ textarea:focus-visible {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: clamp(28px, 6vh, 56px);
+  bottom: clamp(16px, 4vh, 40px);
   z-index: 2;
   display: flex;
   flex-direction: column;
@@ -362,6 +362,12 @@ textarea:focus-visible {
   display: flex;
   width: max-content;
   animation: marquee-scroll 26s linear infinite;
+  /* Empêche les micro-saccades/disparitions de texte que Safari peut
+     provoquer en repeignant l'animation image par image : on force le
+     défilement sur sa propre couche GPU. */
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 .marquee__group {
   display: flex;

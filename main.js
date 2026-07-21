@@ -118,6 +118,31 @@ window.addEventListener("resize", () => {
   resizeTimer = setTimeout(fitFullWidthText, 120);
 });
 
+// ---------- Bandeau "services" (marquee) : attendre les polices ----------
+// La police Pressio charge en `font-display: swap` : si le bandeau démarre
+// son défilement avant qu'elle soit prête, le texte change de largeur en
+// cours d'animation (police de repli → Pressio) et le calcul en `-50%` ne
+// correspond plus à la largeur réelle — ça fait sauter/disparaître du texte
+// au moment du bouclage. On met donc l'animation en pause tant que les
+// polices ne sont pas chargées, et on ne la lance qu'une fois la largeur
+// définitive connue.
+const marqueeTrack = document.querySelector(".marquee__track");
+if (marqueeTrack) {
+  marqueeTrack.style.animationPlayState = "paused";
+  const startMarquee = () => {
+    marqueeTrack.style.animationPlayState = "running";
+  };
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(startMarquee);
+  } else {
+    startMarquee();
+  }
+  // Filet de sécurité si `fonts.ready` ne se résout pas (cas rare) : on
+  // démarre quand même après un court délai plutôt que de laisser le
+  // bandeau figé.
+  setTimeout(startMarquee, 1500);
+}
+
 // ---------- Année du footer ----------
 const yearEl = document.getElementById("year");
 if (yearEl) yearEl.textContent = new Date().getFullYear();
