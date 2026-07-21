@@ -514,10 +514,22 @@ function buildSmoke({ distance = 18, scale = 46, density = 1, speed = 1 } = {}) 
       void main() {
         vec2 uv = vec2(vUv.x * uAspect, vUv.y);
 
+        // Le hash procédural ci-dessus (fract(p * grands nombres)) perd sa
+        // précision quand p devient grand — imperceptible sur les GPU qui
+        // honorent vraiment highp en fragment shader (desktop, iOS/Metal),
+        // mais beaucoup de GPU Android ne supportent en réalité que
+        // mediump en fragment shader (environ 10 bits de mantisse) quoi
+        // qu'on déclare en tête de shader : au bout de quelques dizaines de
+        // secondes, uTime (qui grandit sans fin) fait sortir p de la zone
+        // sûre et le bruit dégénère en blocs/artefacts géométriques au lieu
+        // de volutes lisses. On reboucle donc le temps sur une fenêtre large
+        // mais bornée pour que p ne dérive jamais hors de cette zone sûre.
+        float tw = mod(uTime, 600.0);
+
         // Défilement continu vers la droite (décalage pur : boucle infinie,
         // aucune couture possible, contrairement à une texture/vidéo finie).
-        float drift = uTime * 0.045 * uSpeed;
-        vec2 p = uv * vec2(1.7, 2.1) + vec2(-drift, uTime * 0.01 * uSpeed);
+        float drift = tw * 0.045 * uSpeed;
+        vec2 p = uv * vec2(1.7, 2.1) + vec2(-drift, tw * 0.01 * uSpeed);
 
         // "Domain warping" : on déforme l'espace d'échantillonnage par du
         // bruit lui-même animé, ce qui donne ces volutes organiques plutôt
