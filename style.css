@@ -665,16 +665,28 @@ textarea:focus-visible {
   margin: 0 auto;
   overflow: hidden; /* le bandeau de logos déborde volontairement de chaque côté */
 }
+.trusted__label-row {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 3.5vw, 32px);
+  padding: 0 var(--gutter);
+  margin-bottom: 28px;
+}
+.trusted__line {
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--ink);
+  opacity: 0.55;
+}
 .trusted__label {
   font-family: var(--font-serif); /* Pressio */
   font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-size: clamp(19px, 2.4vw, 25px);
+  font-size: clamp(24px, 3.2vw, 32px);
   color: var(--ink);
-  text-align: center;
-  margin: 0 0 24px;
-  padding: 0 var(--gutter);
+  white-space: nowrap;
+  margin: 0;
 }
 
 /* ---- Bandeau de logos, même principe que le bandeau de services du
