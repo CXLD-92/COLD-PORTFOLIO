@@ -604,7 +604,7 @@ textarea:focus-visible {
      ci-dessous ne servent que de filet de secours avant le premier
      calcul JS. */
   transform: translateY(var(--work-lift, 0)) rotate(var(--work-rotate, 0deg)) scale(var(--work-scale, 1));
-  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+  transition: box-shadow 0.15s ease-out;
   will-change: transform, box-shadow;
   margin-right: -46px; /* chevauchement plus serré entre les cartes */
 }
@@ -670,7 +670,7 @@ textarea:focus-visible {
   font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-size: clamp(15px, 1.8vw, 19px);
+  font-size: clamp(19px, 2.4vw, 25px);
   color: var(--ink);
   text-align: center;
   margin: 0 0 24px;
@@ -703,7 +703,7 @@ textarea:focus-visible {
 /* Hauteur fixe, largeur libre : chaque logo est mis à la même échelle
    visuelle quelles que soient ses proportions d'origine. */
 .trusted__logo {
-  height: clamp(28px, 3.6vw, 40px);
+  height: clamp(38px, 4.8vw, 54px);
   width: auto;
   flex-shrink: 0;
   opacity: 1; /* blanc plein, comme le reste des éléments de la page */

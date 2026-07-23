@@ -154,6 +154,28 @@ if (marqueeTrack) {
   setTimeout(startMarquee, 1500);
 }
 
+// ---------- Bandeau "Trusted by" (logos) : attendre le chargement des images ----------
+// Même piège que le bandeau de services : les SVG des logos n'ont pas de
+// width/height fixes (juste un viewBox), donc leur taille réelle n'est
+// connue qu'une fois chargés. Si l'animation démarre avant, la largeur de
+// la piste change en cours de route et le `-50%` ne tombe plus au bon
+// endroit — ça fait sauter/disparaître les logos au moment du bouclage.
+const trustedTrack = document.querySelector(".trusted__track");
+if (trustedTrack) {
+  trustedTrack.style.animationPlayState = "paused";
+  const startTrustedMarquee = () => {
+    trustedTrack.style.animationPlayState = "running";
+  };
+  const logos = Array.from(trustedTrack.querySelectorAll("img"));
+  Promise.all(
+    logos.map((img) => (img.decode ? img.decode().catch(() => {}) : Promise.resolve()))
+  ).then(startTrustedMarquee);
+  // Filet de sécurité si le chargement traîne (mobile/connexion lente) :
+  // on démarre quand même après un court délai plutôt que de laisser le
+  // bandeau figé indéfiniment.
+  setTimeout(startTrustedMarquee, 1500);
+}
+
 // ---------- Année du footer ----------
 const yearEl = document.getElementById("year");
 if (yearEl) yearEl.textContent = new Date().getFullYear();
