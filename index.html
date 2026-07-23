@@ -140,12 +140,19 @@
 
 <!-- ============ WORK ============ -->
 <section class="work" id="work">
-  <div class="work__head">
-    <span class="work__line" aria-hidden="true"></span>
-    <h2 class="work__title">Work</h2>
-  </div>
-
   <div class="work__carousel-wrap">
+    <div class="work__fade" aria-hidden="true"></div>
+    <div class="work__head">
+      <div class="work__head-row">
+        <h2 class="work__title">Work</h2>
+        <a class="work__cta" href="#contact">
+          <span>See more</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+      <p class="work__subtitle">From idea to identity, every project is a chance to build work that leaves a mark.</p>
+    </div>
+
     <ul class="work__carousel" id="work-carousel">
       <li class="work-card" data-tone="warm">
         <div class="work-card__media" aria-hidden="true"></div>
@@ -163,25 +170,32 @@
         <div class="work-card__media" aria-hidden="true"></div>
       </li>
     </ul>
-
-    <a class="work__cta" href="#contact">
-      <span>See more</span>
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </a>
   </div>
 </section>
 
 <!-- ============ TRUSTED BY ============ -->
 <section class="trusted" aria-label="Ils m'ont fait confiance">
   <p class="trusted__label">Trusted by</p>
-  <ul class="trusted__row">
-    <li>STUDIO NOIR</li>
-    <li>MERIDIAN</li>
-    <li>ARC &amp; CO</li>
-    <li>HALO MEDIA</li>
-    <li>NORTHVALE</li>
-    <li>ECHELON</li>
-  </ul>
+  <div class="trusted__marquee">
+    <div class="trusted__track">
+      <div class="trusted__group">
+        <img class="trusted__logo" src="assets/img/logos/vacra.svg" alt="Vacra" />
+        <img class="trusted__logo" src="assets/img/logos/himra.svg" alt="Himra" />
+        <img class="trusted__logo" src="assets/img/logos/karmen.svg" alt="Karmen" />
+        <img class="trusted__logo" src="assets/img/logos/lafouine.svg" alt="La Fouine" />
+        <img class="trusted__logo" src="assets/img/logos/rk.svg" alt="RK" />
+        <img class="trusted__logo" src="assets/img/logos/wixola.svg" alt="Wixola" />
+      </div>
+      <div class="trusted__group" aria-hidden="true">
+        <img class="trusted__logo" src="assets/img/logos/vacra.svg" alt="" />
+        <img class="trusted__logo" src="assets/img/logos/himra.svg" alt="" />
+        <img class="trusted__logo" src="assets/img/logos/karmen.svg" alt="" />
+        <img class="trusted__logo" src="assets/img/logos/lafouine.svg" alt="" />
+        <img class="trusted__logo" src="assets/img/logos/rk.svg" alt="" />
+        <img class="trusted__logo" src="assets/img/logos/wixola.svg" alt="" />
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- ============ CONTACT ============ -->

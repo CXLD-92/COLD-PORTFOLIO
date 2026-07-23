@@ -77,11 +77,22 @@ function fitFullWidthText() {
   // la largeur — d'où scale: 0.5. Comme le titre est maintenant un item
   // flex (rétréci à son contenu), on mesure la largeur cible sur toute
   // la ligne (.about__title-row) plutôt que sur le titre lui-même.
-  fitTextToWidth(document.querySelector(".about__title"), {
+  const aboutTitle = document.querySelector(".about__title");
+  fitTextToWidth(aboutTitle, {
     scale: 0.5,
     widthRef: document.querySelector(".about__title-row"),
   });
   sizeAboutShape();
+
+  // "Work" reprend la taille d'"About", légèrement réduite (0.72x) : à
+  // l'identique ça faisait un peu trop massif au-dessus des cartes.
+  // `align-items: center` sur .work__head garde le titre bien centré
+  // verticalement avec le bouton "See more", peu importe sa taille.
+  const workTitle = document.querySelector(".work__title");
+  if (workTitle && aboutTitle && aboutTitle.style.fontSize) {
+    const aboutSizePx = parseFloat(aboutTitle.style.fontSize);
+    if (aboutSizePx) workTitle.style.fontSize = `${aboutSizePx * 0.72}px`;
+  }
 }
 
 // La forme (flèche/éclair) est un item flex juste à côté du mot "About" —
@@ -190,6 +201,94 @@ const revealObserver = new IntersectionObserver(
   { threshold: 0.15, rootMargin: "0px 0px -60px 0px" }
 );
 revealTargets.forEach((el) => revealObserver.observe(el));
+
+// ---------- Carrousel "Work" : centrer la carte du milieu au chargement ----------
+// Contrairement à `justify-content: center`, ce calcul en JS n'entre pas
+// en conflit avec le scroll natif (certains navigateurs rendent le début
+// de la liste inaccessible au scroll quand `justify-content: center` est
+// combiné à `overflow-x: auto`). On se contente de positionner le scroll
+// une fois au chargement — l'utilisateur peut ensuite scroller librement.
+const workCarousel = document.getElementById("work-carousel");
+if (workCarousel) {
+  const workCards = Array.from(workCarousel.querySelectorAll(".work-card"));
+
+  const centerMiddleWorkCard = () => {
+    const middle = workCards[Math.floor(workCards.length / 2)];
+    if (!middle) return;
+    workCarousel.scrollLeft =
+      middle.offsetLeft - workCarousel.clientWidth / 2 + middle.offsetWidth / 2;
+  };
+  window.addEventListener("load", centerMiddleWorkCard);
+  window.addEventListener("resize", centerMiddleWorkCard);
+  centerMiddleWorkCard();
+
+  // ---- Arc dynamique + focus pendant le scroll ----
+  // À chaque frame de scroll, on mesure la distance de chaque carte au
+  // centre du cadre (en "largeurs de carte") et on en déduit :
+  //  - une rotation qui s'annule au centre et augmente en s'éloignant ;
+  //  - une élévation (cosinus) : la carte au centre est la plus haute ;
+  //  - une échelle : la carte au centre grossit légèrement (focus).
+  // Comme tout est recalculé en fonction de la position réelle du
+  // scroll, l'arc "tourne" avec le carrousel — ce n'est jamais telle ou
+  // telle carte qui est droite, mais toujours celle qui est au centre.
+  const jitter = [-2, 1.2, -1, 1.5, -1.6]; // petit écart fixe par carte, pour casser l'aspect trop régulier
+
+  const ARC_SPAN = 2.2;      // distance (en cartes) au-delà de laquelle l'arc est plat
+  const MAX_ROTATE = 10;     // degrés de rotation par carte de distance au centre
+  const MAX_LIFT = 54;       // px : écart d'élévation entre le centre et le bord de l'arc
+
+  const FOCUS_SPAN = 0.55;     // distance (en cartes) au-delà de laquelle il n'y a plus aucun focus
+  const MAX_SCALE_BOOST = 0.10; // grossissement max de la carte au centre
+  const MAX_SCALE_SHRINK = 0.02; // quasi rien pour les autres — le focus doit rester ponctuel
+
+  let workFocusTicking = false;
+
+  function applyWorkArc() {
+    workFocusTicking = false;
+    const wrapRect = workCarousel.getBoundingClientRect();
+    const centerX = wrapRect.left + wrapRect.width / 2;
+
+    workCards.forEach((card, i) => {
+      const rect = card.getBoundingClientRect();
+      const cardCenterX = rect.left + rect.width / 2;
+      const delta = (cardCenterX - centerX) / rect.width; // signé : négatif = à gauche du centre
+      const absDelta = Math.abs(delta);
+
+      const clampedArc = Math.max(-ARC_SPAN, Math.min(ARC_SPAN, delta));
+      const focusLinear = Math.max(0, 1 - Math.min(absDelta, FOCUS_SPAN) / FOCUS_SPAN);
+      // Smoothstep plutôt qu'une pente droite : le focus reste proche de
+      // 0 tant qu'on n'est pas presque au centre, puis "pop" nettement
+      // sur la carte réellement centrée, au lieu de s'étaler doucement
+      // sur ses voisines.
+      const focus = focusLinear * focusLinear * (3 - 2 * focusLinear);
+      // Le jitter (irrégularité fixe par carte) s'efface complètement au
+      // focus : sans ça, la carte pile au centre garderait quand même
+      // quelques degrés d'inclinaison au lieu d'être parfaitement à la
+      // verticale.
+      const rotate = clampedArc * MAX_ROTATE + jitter[i % jitter.length] * (1 - focus);
+      const lift = (1 - Math.cos((clampedArc / ARC_SPAN) * (Math.PI / 2))) * MAX_LIFT;
+
+      const scale = 1 - MAX_SCALE_SHRINK * (1 - focus) + MAX_SCALE_BOOST * focus;
+
+      card.style.setProperty("--work-rotate", `${rotate.toFixed(2)}deg`);
+      card.style.setProperty("--work-lift", `${lift.toFixed(1)}px`);
+      card.style.setProperty("--work-scale", scale.toFixed(3));
+      card.style.setProperty("--work-glow", (focus * 0.4).toFixed(3));
+    });
+  }
+
+  function requestWorkFocusUpdate() {
+    if (!workFocusTicking) {
+      workFocusTicking = true;
+      requestAnimationFrame(applyWorkArc);
+    }
+  }
+
+  workCarousel.addEventListener("scroll", requestWorkFocusUpdate, { passive: true });
+  window.addEventListener("resize", requestWorkFocusUpdate);
+  window.addEventListener("load", applyWorkArc);
+  applyWorkArc();
+}
 
 // ---------- Formulaire de contact ----------
 //
