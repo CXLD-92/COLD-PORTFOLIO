@@ -168,8 +168,13 @@ if (burger) {
 }
 
 // ---------- Apparitions au scroll ----------
+// (.work-card est volontairement exclu : ces cartes ont leur propre
+// transform fixe — rotation + élévation de l'arc, voir style.css — et
+// la règle [data-reveal].is-visible { transform: translateY(0) } de cet
+// effet l'écraserait entièrement une fois la carte révélée, aplatissant
+// tout l'arc.)
 const revealTargets = document.querySelectorAll(
-  ".about, .work__head, .work-card, .trusted, .contact__card"
+  ".about, .work__head, .trusted, .contact__card"
 );
 revealTargets.forEach((el) => el.setAttribute("data-reveal", ""));
 
