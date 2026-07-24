@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -27,9 +27,13 @@
 <!-- ============ NAV ============ -->
 <header class="nav">
   <div class="nav__lang" role="group" aria-label="Langue">
-    <button class="nav__lang-btn is-active" type="button" data-lang="fr" aria-pressed="true">FR</button>
-    <button class="nav__lang-btn" type="button" data-lang="en" aria-pressed="false">EN</button>
+    <button class="nav__lang-btn" type="button" data-lang="fr" aria-pressed="false">FR</button>
+    <button class="nav__lang-btn is-active" type="button" data-lang="en" aria-pressed="true">EN</button>
   </div>
+
+  <a class="nav__logo" href="#hero" aria-label="Back to top">
+    <img src="assets/img/logo-mark.svg" alt="Cold Production" />
+  </a>
 
   <nav class="nav__links" aria-label="Navigation principale">
     <a href="#work">Work</a>
@@ -37,10 +41,44 @@
     <a href="#contact">Contact</a>
   </nav>
 
-  <button class="nav__burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false">
+  <button class="nav__burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu-overlay">
     <span></span><span></span><span></span>
   </button>
 </header>
+
+<!-- ============ MENU (plein écran) ============ -->
+<div class="menu-overlay" id="menu-overlay" aria-hidden="true">
+  <button class="menu-overlay__close" type="button" aria-label="Close menu">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M2 2l16 16M18 2 2 18" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+  </button>
+
+  <a class="menu-overlay__logo" href="#hero" aria-label="Back to home">
+    <img src="assets/img/logo-mark.svg" alt="Cold Production" />
+  </a>
+
+  <nav class="menu-overlay__nav" aria-label="Work categories">
+    <a class="menu-overlay__item" href="#work">
+      <span class="menu-overlay__item-title">Certifications</span>
+      <span class="menu-overlay__item-sub">Reward design</span>
+    </a>
+    <a class="menu-overlay__item" href="#work">
+      <span class="menu-overlay__item-title">Music</span>
+      <span class="menu-overlay__item-sub">Artistic direction</span>
+    </a>
+    <a class="menu-overlay__item" href="#work">
+      <span class="menu-overlay__item-title">Media</span>
+      <span class="menu-overlay__item-sub">Visual identity</span>
+    </a>
+    <a class="menu-overlay__item" href="#work">
+      <span class="menu-overlay__item-title">Brand design</span>
+      <span class="menu-overlay__item-sub">Identity &amp; branding</span>
+    </a>
+  </nav>
+
+  <a class="menu-overlay__insta" href="https://www.instagram.com/cxld_prod/" target="_blank" rel="noopener noreferrer" aria-label="Cold Production on Instagram">
+    <img src="assets/img/instagram.svg" alt="" />
+  </a>
+</div>
 
 <!-- ============ HERO ============ -->
 <section class="hero" id="hero">
@@ -55,6 +93,8 @@
       <svg width="26" height="14" viewBox="0 0 26 14" fill="none"><path d="M1 1l12 11L25 1" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </a>
   </div>
+
+  <div class="hero__smoke-overlay" aria-hidden="true"></div>
 </section>
 
 <!-- ============ MARQUEE ============ -->
@@ -170,6 +210,13 @@
         <div class="work-card__media" aria-hidden="true"></div>
       </li>
     </ul>
+
+    <button class="work__arrow work__arrow--prev" type="button" aria-label="Previous project" aria-controls="work-carousel">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11 3 5 9l6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="work__arrow work__arrow--next" type="button" aria-label="Next project" aria-controls="work-carousel">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M7 3l6 6-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
   </div>
 </section>
 
@@ -205,36 +252,32 @@
 <!-- ============ CONTACT ============ -->
 <section class="contact" id="contact">
   <div class="contact__card">
+    <h2 class="contact__title">Contact</h2>
     <p class="contact__eyebrow">Shoot me an e-mail</p>
-    <h2 class="contact__title">C&nbsp;O&nbsp;N&nbsp;T&nbsp;A&nbsp;C&nbsp;T</h2>
 
     <form class="contact__form" id="contact-form" novalidate>
       <div class="contact__row">
         <div class="field">
           <label for="cf-name">What is your name?</label>
-          <input type="text" id="cf-name" name="name" autocomplete="name" placeholder="Pseudo, prénom &amp; nom…" />
+          <input type="text" id="cf-name" name="name" autocomplete="name" placeholder="Nickname, first &amp; last name…" />
         </div>
         <div class="field">
           <label for="cf-email">What is your e-mail?</label>
-          <input type="email" id="cf-email" name="email" autocomplete="email" placeholder="toi@exemple.com" required />
+          <input type="email" id="cf-email" name="email" autocomplete="email" placeholder="you@example.com" required />
         </div>
       </div>
 
       <div class="field">
         <label for="cf-subject">What is your project?</label>
-        <input type="text" id="cf-subject" name="subject" placeholder="Objet de la demande" required />
+        <input type="text" id="cf-subject" name="subject" placeholder="Subject of your request" required />
       </div>
 
       <div class="field">
         <label for="cf-message">Tell me more about it!</label>
-        <textarea id="cf-message" name="message" rows="3" placeholder="Informations complémentaires (facultatif)"></textarea>
+        <textarea id="cf-message" name="message" rows="3" placeholder="Additional details (optional)"></textarea>
       </div>
 
       <div class="contact__footer">
-        <p class="contact__note">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        </p>
         <button type="submit" class="btn-connect">
           <span>Let's connect</span>
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9h12M10 4l5 5-5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -244,11 +287,15 @@
       <p class="contact__status" id="contact-status" role="status" aria-live="polite"></p>
     </form>
   </div>
+
+  <img class="contact__mark" src="assets/img/logo-mark.svg" alt="Cold Production" />
 </section>
 
 <footer class="footer">
-  <span>© <span id="year"></span> Kylian B.</span>
-  <span>PORTFOLIO</span>
+  <span>© <span id="year"></span> COLD PRODUCTION</span>
+  <a class="footer__insta" href="https://www.instagram.com/cxld_prod/" target="_blank" rel="noopener noreferrer" aria-label="Cold Production on Instagram">
+    <img src="assets/img/instagram.svg" alt="" />
+  </a>
 </footer>
 
 </div><!-- /.frame -->

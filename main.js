@@ -93,6 +93,11 @@ function fitFullWidthText() {
     const aboutSizePx = parseFloat(aboutTitle.style.fontSize);
     if (aboutSizePx) workTitle.style.fontSize = `${aboutSizePx * 0.72}px`;
   }
+
+  // "Contact" occupe toute la largeur disponible dans la carte, comme
+  // "PORTFOLIO" dans le hero — légère marge (scale: 0.94) pour ne pas
+  // toucher les bords de la carte.
+  fitTextToWidth(document.querySelector(".contact__title"), { scale: 0.94 });
 }
 
 // La forme (flèche/éclair) est un item flex juste à côté du mot "About" —
@@ -188,17 +193,54 @@ document.querySelectorAll(".nav__lang-btn").forEach((btn) => {
   });
 });
 
-// ---------- Burger menu ----------
+// ---------- Menu plein écran ----------
 const burger = document.querySelector(".nav__burger");
-if (burger) {
-  burger.addEventListener("click", () => {
-    const expanded = burger.getAttribute("aria-expanded") === "true";
-    burger.setAttribute("aria-expanded", String(!expanded));
-    // Le site n'a qu'une page pour l'instant : le burger fait défiler vers le contact.
-    // À remplacer par un vrai panneau de navigation quand d'autres pages existeront.
-    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
-  });
+const menuOverlay = document.getElementById("menu-overlay");
+const menuClose = document.querySelector(".menu-overlay__close");
+
+// ---------- Header : fond noir + logo une fois le hero quitté ----------
+const navEl = document.querySelector(".nav");
+const heroEl = document.getElementById("hero");
+if (navEl && heroEl) {
+  const navScrollObserver = new IntersectionObserver(
+    ([entry]) => {
+      navEl.classList.toggle("is-scrolled", !entry.isIntersecting);
+    },
+    { threshold: 0, rootMargin: "-10% 0px 0px 0px" }
+  );
+  navScrollObserver.observe(heroEl);
 }
+
+function openMenu() {
+  if (!menuOverlay) return;
+  menuOverlay.classList.add("is-open");
+  menuOverlay.setAttribute("aria-hidden", "false");
+  burger?.setAttribute("aria-expanded", "true");
+  document.body.style.overflow = "hidden"; // pas de scroll de la page derrière le menu
+}
+function closeMenu() {
+  if (!menuOverlay) return;
+  menuOverlay.classList.remove("is-open");
+  menuOverlay.setAttribute("aria-hidden", "true");
+  burger?.setAttribute("aria-expanded", "false");
+  document.body.style.overflow = "";
+}
+
+burger?.addEventListener("click", () => {
+  const expanded = burger.getAttribute("aria-expanded") === "true";
+  if (expanded) closeMenu();
+  else openMenu();
+});
+menuClose?.addEventListener("click", closeMenu);
+// Le logo ("retour à la landing page") et les catégories ferment le menu
+// une fois cliqués, pour qu'on ne reste pas coincé dessus après avoir
+// suivi le lien.
+menuOverlay?.querySelectorAll("a").forEach((link) => {
+  link.addEventListener("click", closeMenu);
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeMenu();
+});
 
 // ---------- Apparitions au scroll ----------
 // (.work-card est volontairement exclu : ces cartes ont leur propre
@@ -255,25 +297,31 @@ if (workCarousel) {
   // telle carte qui est droite, mais toujours celle qui est au centre.
   const jitter = [-2, 1.2, -1, 1.5, -1.6]; // petit écart fixe par carte, pour casser l'aspect trop régulier
 
-  const ARC_SPAN = 2.2;      // distance (en cartes) au-delà de laquelle l'arc est plat
-  const MAX_ROTATE = 10;     // degrés de rotation par carte de distance au centre
-  const MAX_LIFT = 54;       // px : écart d'élévation entre le centre et le bord de l'arc
+  const ARC_SPAN = 2.8;      // distance (en cartes) au-delà de laquelle l'arc est plat
+  const MAX_ROTATE = 5;      // degrés de rotation par carte de distance au centre
+  const MAX_LIFT = 24;       // px : écart d'élévation entre le centre et le bord de l'arc
 
-  const FOCUS_SPAN = 0.55;     // distance (en cartes) au-delà de laquelle il n'y a plus aucun focus
-  const MAX_SCALE_BOOST = 0.10; // grossissement max de la carte au centre
+  const FOCUS_SPAN = 1.15;     // distance (en cartes) au-delà de laquelle il n'y a plus aucun focus — plus large = transition plus progressive
+  const MAX_SCALE_BOOST = 0.05; // grossissement max de la carte au centre
   const MAX_SCALE_SHRINK = 0.02; // quasi rien pour les autres — le focus doit rester ponctuel
 
   let workFocusTicking = false;
 
   function applyWorkArc() {
     workFocusTicking = false;
-    const wrapRect = workCarousel.getBoundingClientRect();
-    const centerX = wrapRect.left + wrapRect.width / 2;
+    // Distance calculée à partir de la géométrie de mise en page pure
+    // (offsetLeft/scrollLeft), PAS depuis getBoundingClientRect (qui
+    // reflète le transform déjà appliqué). Avec `transform-origin: bottom
+    // center`, une carte tournée a un rectangle visuel dont le centre
+    // n'est plus exactement son centre de mise en page — mesurer sur ce
+    // rectangle créait une boucle de rétroaction qui l'empêchait de
+    // jamais atteindre delta = 0 pile, donc de finir parfaitement
+    // centrée/verticale après un clic sur une flèche.
+    const scrollCenter = workCarousel.scrollLeft + workCarousel.clientWidth / 2;
 
     workCards.forEach((card, i) => {
-      const rect = card.getBoundingClientRect();
-      const cardCenterX = rect.left + rect.width / 2;
-      const delta = (cardCenterX - centerX) / rect.width; // signé : négatif = à gauche du centre
+      const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+      const delta = (cardCenter - scrollCenter) / card.offsetWidth; // signé : négatif = à gauche du centre
       const absDelta = Math.abs(delta);
 
       const clampedArc = Math.max(-ARC_SPAN, Math.min(ARC_SPAN, delta));
@@ -310,6 +358,75 @@ if (workCarousel) {
   window.addEventListener("resize", requestWorkFocusUpdate);
   window.addEventListener("load", applyWorkArc);
   applyWorkArc();
+
+  // ---- Flèches précédente/suivante ----
+  // Plutôt que de scroller d'une distance calculée (imprécise à cause du
+  // scale dynamique des cartes, qui faussait la mesure et faisait sauter
+  // une carte sur deux), on repère l'index de la carte réellement la plus
+  // proche du centre, puis on cible directement l'index voisin — même
+  // logique que le centrage initial, donc toujours exact.
+  const prevArrow = document.querySelector(".work__arrow--prev");
+  const nextArrow = document.querySelector(".work__arrow--next");
+
+  function currentWorkCenterIndex() {
+    const scrollCenter = workCarousel.scrollLeft + workCarousel.clientWidth / 2;
+    let closestIndex = 0;
+    let closestDist = Infinity;
+    workCards.forEach((card, i) => {
+      const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+      const dist = Math.abs(cardCenter - scrollCenter);
+      if (dist < closestDist) {
+        closestDist = dist;
+        closestIndex = i;
+      }
+    });
+    return closestIndex;
+  }
+
+  // Scroll animé "maison" plutôt que `scrollTo({behavior:'smooth'})` : la
+  // durée du smooth scroll natif est fixée par le navigateur (souvent
+  // très courte), ce qui faisait traverser tout l'arc/le focus en un
+  // clin d'œil et donnait un effet brusque au clic sur une flèche. Ici on
+  // contrôle la durée et l'easing nous-mêmes, pour un mouvement bien plus
+  // doux et progressif.
+  let workScrollAnim = null;
+  function animateWorkScrollTo(target, duration = 650) {
+    if (workScrollAnim) cancelAnimationFrame(workScrollAnim);
+    const start = workCarousel.scrollLeft;
+    const distance = target - start;
+    const startTime = performance.now();
+    const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+    // Le scroll-snap natif du navigateur (`scroll-snap-type: x proximity`)
+    // essayait de "corriger" la position à chaque frame pendant qu'on la
+    // fixait nous-mêmes en JS — les deux se battaient, ce qui cassait
+    // l'animation (à-coups, retours en arrière). On le coupe le temps de
+    // l'animation, et on le restaure une fois arrivé.
+    workCarousel.style.scrollSnapType = "none";
+
+    function step(now) {
+      const elapsed = Math.min(1, (now - startTime) / duration);
+      workCarousel.scrollLeft = start + distance * easeInOutCubic(elapsed);
+      if (elapsed < 1) {
+        workScrollAnim = requestAnimationFrame(step);
+      } else {
+        workScrollAnim = null;
+        workCarousel.style.scrollSnapType = "";
+      }
+    }
+    workScrollAnim = requestAnimationFrame(step);
+  }
+
+  function scrollToWorkIndex(index) {
+    const clamped = Math.max(0, Math.min(workCards.length - 1, index));
+    const card = workCards[clamped];
+    if (!card) return;
+    const target = card.offsetLeft - workCarousel.clientWidth / 2 + card.offsetWidth / 2;
+    animateWorkScrollTo(target);
+  }
+
+  prevArrow?.addEventListener("click", () => scrollToWorkIndex(currentWorkCenterIndex() - 1));
+  nextArrow?.addEventListener("click", () => scrollToWorkIndex(currentWorkCenterIndex() + 1));
 }
 
 // ---------- Formulaire de contact ----------
@@ -332,7 +449,7 @@ form?.addEventListener("submit", async (e) => {
 
   if (!FORM_ENDPOINT) {
     setStatus(
-      "Le formulaire n'est pas encore connecté à un service d'envoi (voir js/main.js → FORM_ENDPOINT).",
+      "The form isn't connected to a sending service yet (see js/main.js → FORM_ENDPOINT).",
       "error"
     );
     return;
@@ -340,7 +457,7 @@ form?.addEventListener("submit", async (e) => {
 
   const data = new FormData(form);
   submitBtn?.setAttribute("disabled", "true");
-  setStatus("Envoi en cours…", null);
+  setStatus("Sending…", null);
 
   try {
     const res = await fetch(FORM_ENDPOINT, {
@@ -351,12 +468,12 @@ form?.addEventListener("submit", async (e) => {
 
     if (res.ok) {
       form.reset();
-      setStatus("Message envoyé — merci, je reviens vers toi rapidement !", "ok");
+      setStatus("Message sent — thanks, I'll get back to you shortly!", "ok");
     } else {
-      setStatus("Le message n'a pas pu être envoyé. Réessaie dans un instant.", "error");
+      setStatus("Your message couldn't be sent. Please try again in a moment.", "error");
     }
   } catch (err) {
-    setStatus("Connexion impossible. Vérifie ta connexion et réessaie.", "error");
+    setStatus("Connection failed. Check your connection and try again.", "error");
   } finally {
     submitBtn?.removeAttribute("disabled");
   }

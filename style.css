@@ -158,7 +158,7 @@ textarea:focus-visible {
   background-size: 160px 160px;
 }
 
-.eyebrow, .contact__eyebrow, .about__eyebrow {
+.eyebrow, .about__eyebrow {
   font-family: var(--font-ui);
   text-transform: uppercase;
   letter-spacing: 0.28em;
@@ -177,7 +177,16 @@ textarea:focus-visible {
   justify-content: space-between;
   padding: clamp(18px, 3vw, 30px) var(--gutter);
   color: var(--ink);
-  mix-blend-mode: difference;
+  background: transparent;
+  mix-blend-mode: difference; /* sur le hero : reste lisible par-dessus la scène 3D/le texte, quel que soit le contenu en dessous */
+  transition: background 0.3s ease;
+}
+/* Une fois qu'on a quitté le hero : fond plein noir (le mix-blend-mode
+   "difference" n'a plus de raison d'être sur un fond uni), le switch de
+   langue laisse place au logo (retour en haut de page au clic). */
+.nav.is-scrolled {
+  background: var(--bg);
+  mix-blend-mode: normal;
 }
 
 /* Switch de langue : pilule avec les deux options à l'intérieur,
@@ -189,6 +198,12 @@ textarea:focus-visible {
   border: 1px solid rgba(245, 243, 238, 0.45);
   border-radius: 999px;
   padding: 3px;
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+.nav.is-scrolled .nav__lang {
+  opacity: 0;
+  pointer-events: none;
 }
 .nav__lang-btn {
   font-family: var(--font-ui);
@@ -203,6 +218,29 @@ textarea:focus-visible {
 .nav__lang-btn.is-active {
   color: var(--bg);
   background: var(--ink);
+}
+
+/* Logo : superposé à l'emplacement du switch de langue, masqué tant
+   qu'on est sur le hero, révélé une fois qu'on a scrollé. */
+.nav__logo {
+  position: absolute;
+  left: var(--gutter);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.nav.is-scrolled .nav__logo {
+  opacity: 1;
+  pointer-events: auto;
+}
+.nav__logo img {
+  height: clamp(22px, 4.5vw, 28px);
+  width: auto;
+  display: block;
 }
 
 .nav__links {
@@ -230,6 +268,94 @@ textarea:focus-visible {
 .nav__burger span:nth-child(1) { width: 26px; }
 .nav__burger span:nth-child(2) { width: 19px; }
 .nav__burger span:nth-child(3) { width: 12px; }
+
+/* =========================================================
+   MENU (panneau plein écran)
+   ========================================================= */
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: clamp(20px, 5vw, 32px) var(--gutter) clamp(28px, 6vw, 48px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+  overflow-y: auto;
+}
+.menu-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+.menu-overlay__close {
+  position: absolute;
+  top: clamp(16px, 4vw, 28px);
+  right: var(--gutter);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: var(--ink);
+}
+.menu-overlay__logo {
+  display: block;
+  margin: clamp(44px, 9vw, 68px) 0 clamp(32px, 6vw, 52px);
+}
+.menu-overlay__logo img {
+  height: clamp(88px, 16vw, 128px);
+  width: auto;
+  display: block;
+}
+
+.menu-overlay__nav {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+}
+.menu-overlay__item {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  column-gap: 12px;
+  padding: clamp(16px, 4vw, 24px) 0;
+  border-bottom: 1px solid rgba(245, 243, 238, 0.28);
+  color: var(--ink);
+  transition: opacity 0.2s ease;
+}
+.menu-overlay__item:hover { opacity: 0.75; }
+.menu-overlay__item-title {
+  font-family: var(--font-serif); /* Pressio */
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: clamp(24px, 6.4vw, 32px);
+}
+.menu-overlay__item-sub {
+  font-family: var(--font-ui); /* Oswald medium italique */
+  font-weight: 500;
+  font-style: italic;
+  font-size: clamp(15px, 4vw, 18px);
+  color: var(--ink);
+  opacity: 0.85;
+}
+
+.menu-overlay__insta {
+  margin-top: auto;
+  padding-top: clamp(28px, 6vw, 44px);
+  display: inline-flex;
+  width: 30px;
+  height: 30px;
+  opacity: 0.9;
+  transition: opacity 0.2s ease;
+}
+.menu-overlay__insta:hover { opacity: 1; }
+.menu-overlay__insta img { width: 100%; height: 100%; display: block; }
 
 /* =========================================================
    HERO
@@ -319,6 +445,35 @@ textarea:focus-visible {
   animation: arrow-bob 2.2s ease-in-out infinite;
 }
 .hero__arrow:hover { color: var(--chrome-2); }
+
+/* Couche de fumée superposée à TOUT le hero — flamme 3D (GLB) et texte
+   (PORTFOLIO / Kylian B) inclus — pour adoucir la frontière entre les
+   deux et donner l'impression que tout baigne dans la même brume.
+   `mix-blend-mode: screen` l'éclaircit sans jamais assombrir ce qu'il y
+   a en dessous ; opacité globale à 20% pour rester discret. */
+.hero__smoke-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3; /* au-dessus de .hero__canvas-wrap (0) ET .hero__text (2) */
+  pointer-events: none;
+  opacity: 0.2;
+  mix-blend-mode: screen;
+  background:
+    radial-gradient(ellipse 55% 40% at 22% 28%, rgba(255,255,255,0.95), transparent 70%),
+    radial-gradient(ellipse 48% 35% at 78% 62%, rgba(255,255,255,0.85), transparent 72%),
+    radial-gradient(ellipse 60% 45% at 50% 88%, rgba(255,255,255,0.75), transparent 70%);
+  filter: blur(34px);
+  animation: hero-smoke-drift 28s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@keyframes hero-smoke-drift {
+  0%   { transform: translate(-3%, -2%) scale(1); }
+  50%  { transform: translate(3%, 2%) scale(1.08); }
+  100% { transform: translate(-2%, 3%) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero__smoke-overlay { animation: none; }
+}
 @keyframes arrow-bob {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(5px); }
@@ -493,7 +648,7 @@ textarea:focus-visible {
    WORK
    ========================================================= */
 .work {
-  padding: 0 0 clamp(40px, 7vw, 88px);
+  padding: 0 0 clamp(28px, 5vw, 60px);
   max-width: 1400px;
   margin: 0 auto;
   overflow: hidden; /* rogne un éventuel débord si la pile est plus large que le cadre */
@@ -506,7 +661,7 @@ textarea:focus-visible {
   z-index: 20; /* toujours au-dessus des cartes ET du dégradé, quel que soit leur empilement */
   display: flex;
   flex-direction: column;
-  gap: clamp(6px, 1.4vw, 12px);
+  gap: 0;
   padding: 0 var(--gutter) clamp(6px, 1.2vw, 12px);
   pointer-events: none; /* laisse passer le scroll/le survol vers le carrousel en dessous */
 }
@@ -572,7 +727,7 @@ textarea:focus-visible {
   padding: 80px calc(50% - (var(--work-card-w) / 2)) 64px;
   overflow-x: auto;
   overflow-y: hidden; /* `visible` ici est en réalité calculé en `auto` par le navigateur dès que overflow-x n'est pas `visible` — ça autorisait un micro-scroll vertical résiduel ; `hidden` le supprime explicitement */
-  touch-action: pan-x;
+  touch-action: pan-x pan-y; /* le geste horizontal reste capté par le carrousel, le vertical remonte scroller la page (avant : `pan-x` seul bloquait tout scroll vertical dès qu'on posait le doigt sur une carte) */
   scroll-snap-type: x proximity;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -656,11 +811,34 @@ textarea:focus-visible {
 .work__cta:hover { gap: 14px; transform: translateY(-1px); }
 .work__cta:active { transform: translateY(0) scale(0.97); }
 
+/* ---- Flèches précédente/suivante, de chaque côté de l'écran, pour
+   naviguer d'une carte à l'autre sans avoir à swiper. Elles s'ajoutent
+   au scroll horizontal tactile déjà en place, sans le remplacer. ---- */
+.work__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 25; /* au-dessus des cartes, du dégradé et de l'en-tête */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(38px, 9vw, 46px);
+  height: clamp(38px, 9vw, 46px);
+  background: none;
+  color: var(--ink); /* flèche blanche */
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.35));
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.work__arrow--prev { left: 6px; }
+.work__arrow--next { right: 6px; }
+.work__arrow:hover { opacity: 0.75; }
+.work__arrow:active { transform: translateY(-50%) scale(0.92); }
+
 /* =========================================================
    TRUSTED BY
    ========================================================= */
 .trusted {
-  padding: 4px 0 var(--section-pad);
+  padding: 4px 0 clamp(36px, 6.5vw, 64px);
   max-width: 1400px;
   margin: 0 auto;
   overflow: hidden; /* le bandeau de logos déborde volontairement de chaque côté */
@@ -670,7 +848,7 @@ textarea:focus-visible {
   align-items: center;
   gap: clamp(16px, 3.5vw, 32px);
   padding: 0 var(--gutter);
-  margin-bottom: 28px;
+  margin-bottom: 12px;
 }
 .trusted__line {
   flex: 1 1 auto;
@@ -709,8 +887,8 @@ textarea:focus-visible {
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  gap: clamp(40px, 8vw, 76px);
-  padding-right: clamp(40px, 8vw, 76px);
+  gap: clamp(24px, 5vw, 44px);
+  padding-right: clamp(24px, 5vw, 44px);
 }
 /* Hauteur fixe, largeur libre : chaque logo est mis à la même échelle
    visuelle quelles que soient ses proportions d'origine. */
@@ -719,9 +897,7 @@ textarea:focus-visible {
   width: auto;
   flex-shrink: 0;
   opacity: 1; /* blanc plein, comme le reste des éléments de la page */
-  transition: transform 0.25s ease;
 }
-.trusted__logo:hover { transform: translateY(-2px); }
 
 @keyframes trusted-scroll {
   from { transform: translateX(-50%); }
@@ -735,7 +911,7 @@ textarea:focus-visible {
    CONTACT
    ========================================================= */
 .contact {
-  padding: 0 var(--gutter) clamp(60px, 10vw, 120px);
+  padding: 0 var(--gutter) 0;
   max-width: 1400px;
   margin: 0 auto;
 }
@@ -743,25 +919,34 @@ textarea:focus-visible {
   background: var(--paper);
   color: var(--paper-ink);
   border-radius: 6px;
-  padding: clamp(28px, 6vw, 72px);
+  padding: clamp(24px, 5vw, 44px) clamp(18px, 4vw, 40px);
   position: relative;
   overflow: hidden;
 }
 .contact__eyebrow {
-  font-size: 11px;
+  font-family: var(--font-serif); /* Pressio */
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: clamp(17px, 2.4vw, 22px);
   color: #7a776d;
-  margin: 0 0 10px;
+  text-align: center;
+  margin: 0 0 clamp(22px, 3.6vw, 32px);
 }
 .contact__title {
-  font-family: var(--font-serif);
-  text-transform: uppercase;
+  font-family: var(--font-display); /* Edition */
   font-weight: 400;
-  font-size: clamp(34px, 6vw, 68px);
-  letter-spacing: 0.05em;
-  margin: 0 0 clamp(32px, 6vw, 56px);
+  color: #0c0b09; /* noir */
+  text-transform: uppercase;
+  letter-spacing: normal; /* espacement par défaut de la typo, plus de tracking forcé */
+  font-size: clamp(64px, 15vw, 160px); /* filet de secours, écrasé par le JS pour occuper toute la largeur */
+  line-height: 0.82; /* sans ça, la hauteur de ligne par défaut de la police laisse un vide sous le texte, même à margin:0 */
+  white-space: nowrap;
+  text-align: center;
+  margin: 0 0 8px;
 }
 
-.contact__form { max-width: 780px; }
+.contact__form { max-width: 780px; margin: 0 auto; }
 .contact__row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -777,7 +962,7 @@ textarea:focus-visible {
   font-family: var(--font-body);
   font-size: clamp(14px, 1.5vw, 16px);
   color: #6f6c62;
-  margin-bottom: 8px;
+  margin-bottom: 14px;
 }
 .field input,
 .field textarea {
@@ -801,17 +986,17 @@ textarea:focus-visible {
 .contact__footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  margin-top: 30px;
-  flex-wrap: wrap;
+  justify-content: center; /* le bouton est maintenant seul, centré */
+  margin-top: clamp(28px, 5vw, 36px);
 }
-.contact__note {
-  max-width: 380px;
-  font-size: 12.5px;
-  line-height: 1.6;
-  color: #6f6c62;
-  margin: 0;
+
+/* Petite marque, sous la carte de contact, sur le fond sombre de la page. */
+.contact__mark {
+  display: block;
+  height: clamp(82px, 15vw, 142px);
+  width: auto;
+  margin: clamp(30px, 5.25vw, 48px) auto;
+  opacity: 0.9;
 }
 
 .btn-connect {
@@ -835,10 +1020,11 @@ textarea:focus-visible {
 .btn-connect:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
 .contact__status {
-  margin: 14px 0 0;
+  margin: 0;
   font-size: 13px;
-  min-height: 1.2em;
+  min-height: 0;
 }
+.contact__status:not(:empty) { margin-top: 14px; }
 .contact__status[data-state="ok"] { color: #2e6b3e; }
 .contact__status[data-state="error"] { color: #a33; }
 
@@ -847,6 +1033,7 @@ textarea:focus-visible {
    ========================================================= */
 .footer {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   padding: 24px var(--gutter) 32px;
   font-family: var(--font-ui);
@@ -856,6 +1043,17 @@ textarea:focus-visible {
   color: var(--muted);
   border-top: 1px solid var(--line-soft);
 }
+.footer__insta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  opacity: 0.85;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.footer__insta img { width: 100%; height: 100%; display: block; }
+.footer__insta:hover { opacity: 1; transform: translateY(-1px); }
 
 /* =========================================================
    Reveal on scroll

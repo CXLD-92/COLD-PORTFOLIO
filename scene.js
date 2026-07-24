@@ -131,7 +131,7 @@ function initHeroScene(canvas) {
       const rawSize = new THREE.Vector3();
       rawBox.getSize(rawSize);
       const maxDim = Math.max(rawSize.x, rawSize.y, rawSize.z) || 1;
-      const targetSize = 2.6;
+      const targetSize = 2.34; // 2.6 réduit de 10%
       model.scale.setScalar(targetSize / maxDim);
 
       // 2) Recentre le modèle sur le centre de sa boîte englobante — son
@@ -212,7 +212,7 @@ function initHeroScene(canvas) {
   //     le texte, pour plus d'immersion (comme si on regardait la flamme
   //     à travers un peu de fumée).
   const smokeNoiseTex = buildNoiseTexture();
-  const smokeBack = buildSmoke({ distance: 18, scale: 46, density: 0.85, speed: 1.0, noiseTex: smokeNoiseTex });
+  const smokeBack = buildSmoke({ distance: 18, scale: 46, density: 0.62, speed: 1.0, noiseTex: smokeNoiseTex });
   const smokeFront = buildSmoke({ distance: 3.4, scale: 9, density: 0.272, speed: 1.35, noiseTex: smokeNoiseTex });
   camera.add(smokeBack.mesh);
   camera.add(smokeFront.mesh);
