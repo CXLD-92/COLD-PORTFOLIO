@@ -152,10 +152,82 @@ textarea:focus-visible {
   inset: 0;
   z-index: 999;
   pointer-events: none;
-  opacity: 0.05;
-  mix-blend-mode: overlay;
+  opacity: 0.035;
+  mix-blend-mode: soft-light; /* `overlay` amplifiait trop le contraste sur les zones sombres/plates par rapport aux cartes colorées — d'où l'impression de coupure juste après le carrousel */
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 160px 160px;
+}
+
+/* Lueurs dynamiques, sur toute la hauteur de la page. `position: absolute`
+   (jamais `fixed`, cf. note dans index.html) + `inset` négatif : le calque
+   déborde volontairement de la zone visible, pour que l'animation de
+   dérive (translate/scale) ne révèle jamais un bord net.
+   `z-index` volontairement TRÈS élevé (au-dessus de tout le contenu de
+   .frame, pas en dessous) : peint dessous, n'importe quel fond local
+   opaque (le dégradé de fin de carrousel .work__fade, les cartes, une
+   carte contact claire…) l'interceptait à cet endroit précis pendant que
+   la section juste à côté le laissait passer — d'où les coupures nettes
+   pile à la frontière des sections. En `mix-blend-mode: screen`, la lueur
+   ne fait qu'éclaircir ce qu'il y a dessous ; elle ne peut jamais rien
+   cacher, donc la peindre par-dessus tout garantit qu'elle reste continue
+   partout, sans plus dépendre du fond (opaque ou non) de chaque section. */
+.bg-glow {
+  position: absolute;
+  inset: -12% -20%;
+  z-index: 500;
+  pointer-events: none;
+  opacity: 0.58;
+  mix-blend-mode: screen;
+}
+.bg-glow__layer {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+.bg-glow__layer--a {
+  background: radial-gradient(ellipse 68% 28% at 50% 20%, rgba(240,241,243,0.14), transparent 72%);
+  animation: bg-glow-drift-a 95s ease-in-out infinite;
+}
+.bg-glow__layer--b {
+  background: radial-gradient(ellipse 62% 26% at 50% 46%, rgba(174,178,182,0.12), transparent 72%);
+  animation: bg-glow-drift-b 130s ease-in-out infinite;
+  animation-delay: -34s; /* décalage négatif : démarre déjà en plein milieu de son cycle, pour que les 3 calques ne soient jamais synchronisés, même au tout premier chargement */
+}
+.bg-glow__layer--c {
+  background: radial-gradient(ellipse 62% 26% at 50% 74%, rgba(240,241,243,0.10), transparent 72%);
+  animation: bg-glow-drift-c 112s ease-in-out infinite;
+  animation-delay: -71s;
+}
+/* Chaque calque dérive horizontalement (gauche-droite) sur son propre
+   nombre de paliers, à des instants irréguliers plutôt que 0/50/100 —
+   ça casse l'impression de va-et-vient mécanique et rend le trajet moins
+   prévisible, façon dérive aléatoire. Un très léger déplacement vertical
+   est ajouté (quelques % à peine) pour que le mouvement ne soit jamais
+   parfaitement plat non plus. */
+@keyframes bg-glow-drift-a {
+  0%   { transform: translate(-7%, 0%); }
+  22%  { transform: translate(10%, -1.5%); }
+  47%  { transform: translate(-4%, 1%); }
+  68%  { transform: translate(13%, -0.5%); }
+  86%  { transform: translate(-10%, 1.5%); }
+  100% { transform: translate(-7%, 0%); }
+}
+@keyframes bg-glow-drift-b {
+  0%   { transform: translate(9%, 1%); }
+  26%  { transform: translate(-12%, -1%); }
+  50%  { transform: translate(6%, 1.5%); }
+  74%  { transform: translate(-8%, -1.5%); }
+  100% { transform: translate(9%, 1%); }
+}
+@keyframes bg-glow-drift-c {
+  0%   { transform: translate(-5%, -1%); }
+  31%  { transform: translate(8%, 1%); }
+  57%  { transform: translate(-13%, 0%); }
+  83%  { transform: translate(4%, -1%); }
+  100% { transform: translate(-5%, -1%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bg-glow__layer { animation: none; }
 }
 
 .eyebrow, .about__eyebrow {
@@ -171,11 +243,13 @@ textarea:focus-visible {
 .nav {
   position: fixed;
   top: 0; left: 0; right: 0;
+  max-width: 560px; /* .nav est maintenant hors de .frame (position:fixed) ; on réplique sa largeur/son centrage pour qu'il reste aligné dessus */
+  margin: 0 auto;
   z-index: 100;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: clamp(18px, 3vw, 30px) var(--gutter);
+  padding: clamp(12px, 2.2vw, 20px) var(--gutter);
   color: var(--ink);
   background: transparent;
   mix-blend-mode: difference; /* sur le hero : reste lisible par-dessus la scène 3D/le texte, quel que soit le contenu en dessous */
@@ -187,6 +261,7 @@ textarea:focus-visible {
 .nav.is-scrolled {
   background: var(--bg);
   mix-blend-mode: normal;
+  box-shadow: 0 1px 0 rgba(245, 243, 238, 0.12); /* léger liseré pour bien détacher le bandeau du contenu en dessous */
 }
 
 /* Switch de langue : pilule avec les deux options à l'intérieur,
@@ -199,10 +274,11 @@ textarea:focus-visible {
   border-radius: 999px;
   padding: 3px;
   opacity: 1;
-  transition: opacity 0.25s ease;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
 }
 .nav.is-scrolled .nav__lang {
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
 }
 .nav__lang-btn {
@@ -238,7 +314,7 @@ textarea:focus-visible {
   pointer-events: auto;
 }
 .nav__logo img {
-  height: clamp(22px, 4.5vw, 28px);
+  height: clamp(30px, 6vw, 38px);
   width: auto;
   display: block;
 }
@@ -275,12 +351,14 @@ textarea:focus-visible {
 .menu-overlay {
   position: fixed;
   inset: 0;
+  max-width: 560px; /* même largeur/centrage que .frame, maintenant qu'il est en dehors */
+  margin: 0 auto;
   z-index: 100;
-  background: var(--bg);
+  background: #090a0a;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: clamp(20px, 5vw, 32px) var(--gutter) clamp(28px, 6vw, 48px);
+  padding: clamp(20px, 5vw, 32px) 0 clamp(28px, 6vw, 48px);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -305,7 +383,7 @@ textarea:focus-visible {
 }
 .menu-overlay__logo {
   display: block;
-  margin: clamp(44px, 9vw, 68px) 0 clamp(32px, 6vw, 52px);
+  margin: clamp(44px, 9vw, 68px) 0 clamp(44px, 8vw, 64px);
 }
 .menu-overlay__logo img {
   height: clamp(88px, 16vw, 128px);
@@ -313,28 +391,38 @@ textarea:focus-visible {
   display: block;
 }
 
+/* Padding uniquement à GAUCHE (pas de padding sur .menu-overlay lui-même
+   ni à droite ici) : le texte reste inséré du même gutter que le reste
+   du site, mais l'item — et donc son séparateur — peut atteindre le bord
+   droit RÉEL de l'écran sans être bloqué par un padding conteneur. */
 .menu-overlay__nav {
   width: 100%;
   max-width: 560px;
+  padding-left: var(--gutter);
   display: flex;
   flex-direction: column;
 }
+/* Rythme asymétrique, mesuré sur la maquette : petit écart entre le texte
+   et sa propre ligne, écart nettement plus grand entre cette ligne et le
+   titre suivant. Ce deuxième écart est porté par le padding-top de
+   l'item SUIVANT (donc pas de double espace) — le tout premier item n'en
+   a pas besoin, le logo fournit déjà sa propre marge basse. */
 .menu-overlay__item {
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
-  column-gap: 12px;
-  padding: clamp(16px, 4vw, 24px) 0;
-  border-bottom: 1px solid rgba(245, 243, 238, 0.28);
+  column-gap: 8px;
+  padding-top: clamp(40px, 9vw, 54px);
   color: var(--ink);
   transition: opacity 0.2s ease;
 }
+.menu-overlay__item:first-child { padding-top: 0; }
 .menu-overlay__item:hover { opacity: 0.75; }
 .menu-overlay__item-title {
   font-family: var(--font-serif); /* Pressio */
   font-weight: 400;
   text-transform: uppercase;
-  font-size: clamp(24px, 6.4vw, 32px);
+  font-size: clamp(30px, 8.4vw, 42px);
 }
 .menu-overlay__item-sub {
   font-family: var(--font-ui); /* Oswald medium italique */
@@ -345,17 +433,34 @@ textarea:focus-visible {
   opacity: 0.85;
 }
 
+/* Séparateur : sur sa propre ligne (flex-basis: 100%), collé de près au
+   texte au-dessus (petit margin-top), et poussé par margin-left: auto
+   jusqu'au bord droit RÉEL de l'écran (permis par le padding retiré côté
+   droit de .menu-overlay/.menu-overlay__nav, voir plus haut) — plus
+   besoin de marge négative. */
+.menu-overlay__item-line {
+  flex-basis: 100%;
+  width: 70%;
+  height: 2px;
+  margin: clamp(14px, 3.4vw, 18px) 0 0 auto;
+  background: var(--ink);
+  pointer-events: none;
+}
+
 .menu-overlay__insta {
+  position: relative;
+  z-index: 5; /* garantit qu'elle reste au-dessus de tout élément voisin du menu */
   margin-top: auto;
-  padding-top: clamp(28px, 6vw, 44px);
+  padding-top: clamp(32px, 7vw, 48px);
   display: inline-flex;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   opacity: 0.9;
   transition: opacity 0.2s ease;
 }
 .menu-overlay__insta:hover { opacity: 1; }
-.menu-overlay__insta img { width: 100%; height: 100%; display: block; }
+.menu-overlay__insta svg { width: 100%; height: 100%; display: block; fill: var(--ink); }
+
 
 /* =========================================================
    HERO
@@ -511,7 +616,11 @@ textarea:focus-visible {
   overflow: hidden;
   width: 100%;
   padding: clamp(10px, 2.4vw, 18px) 0 clamp(28px, 6vw, 44px);
-  background: var(--bg);
+  /* Pas de background ici (pas même var(--bg)) : .frame porte déjà le
+     fond de base, et .bg-glow doit rester visible en continu à travers
+     cette section comme à travers les autres — un fond opaque local
+     peignait par-dessus la lueur exactement sur ce rectangle, ce qui
+     créait une cassure nette à l'entrée/la sortie du bandeau. */
 }
 .marquee__track {
   display: flex;
@@ -648,10 +757,9 @@ textarea:focus-visible {
    WORK
    ========================================================= */
 .work {
-  padding: 0 0 clamp(28px, 5vw, 60px);
+  padding: 0 0 clamp(28px, 5vw, 60px); /* le carrousel (overflow-x:auto) et .frame (overflow-x:clip) gèrent déjà le débordement horizontal — pas besoin de overflow:hidden ici, ça coupait net l'ombre portée des cartes en dessous */
   max-width: 1400px;
   margin: 0 auto;
-  overflow: hidden; /* rogne un éventuel débord si la pile est plus large que le cadre */
 }
 .work__head {
   position: absolute;
@@ -692,7 +800,7 @@ textarea:focus-visible {
   right: 0;
   bottom: 0;
   height: clamp(96px, 20vw, 150px);
-  background: linear-gradient(to top, rgba(8, 8, 10, 0.8) 0%, rgba(8, 8, 10, 0) 100%);
+  background: linear-gradient(to top, rgba(8, 8, 10, 1) 0%, rgba(8, 8, 10, 0) 100%);
   z-index: 10;
   pointer-events: none;
 }
@@ -724,15 +832,17 @@ textarea:focus-visible {
      moitié d'une carte : sans ça, la première et la dernière carte ne
      peuvent jamais atteindre le centre en scrollant jusqu'au bout, donc
      ne sont jamais mises en focus. */
-  padding: 80px calc(50% - (var(--work-card-w) / 2)) 64px;
+  padding: 80px calc(50% - (var(--work-card-w) / 2)) 100px;
   overflow-x: auto;
   overflow-y: hidden; /* `visible` ici est en réalité calculé en `auto` par le navigateur dès que overflow-x n'est pas `visible` — ça autorisait un micro-scroll vertical résiduel ; `hidden` le supprime explicitement */
   touch-action: pan-x pan-y; /* le geste horizontal reste capté par le carrousel, le vertical remonte scroller la page (avant : `pan-x` seul bloquait tout scroll vertical dès qu'on posait le doigt sur une carte) */
   scroll-snap-type: x proximity;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  scrollbar-color: transparent transparent; /* filet de sécurité Firefox */
+  -ms-overflow-style: none; /* Edge/IE legacy — oublié jusqu'ici, pouvait laisser une piste de scrollbar visible pile sous le carrousel */
 }
-.work__carousel::-webkit-scrollbar { display: none; }
+.work__carousel::-webkit-scrollbar { display: none; width: 0; height: 0; background: transparent; }
 
 .work-card {
   position: relative;
@@ -777,6 +887,12 @@ textarea:focus-visible {
   position: absolute;
   inset: 0;
   filter: grayscale(0.1);
+}
+.work-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 .work-card[data-tone="warm"]     .work-card__media { background: #4a3a2c; }
 .work-card[data-tone="cool"]     .work-card__media { background: #2b3138; }
@@ -1033,26 +1149,29 @@ textarea:focus-visible {
    ========================================================= */
 .footer {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  padding: 24px var(--gutter) 32px;
+  justify-content: center;
+  gap: 14px;
+  padding: 28px var(--gutter) 36px;
   font-family: var(--font-ui);
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted);
   border-top: 1px solid var(--line-soft);
+  text-align: center;
 }
 .footer__insta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
-  opacity: 0.85;
+  width: 26px;
+  height: 26px;
+  opacity: 0.9;
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
-.footer__insta img { width: 100%; height: 100%; display: block; }
+.footer__insta svg { width: 100%; height: 100%; display: block; fill: var(--ink); }
 .footer__insta:hover { opacity: 1; transform: translateY(-1px); }
 
 /* =========================================================

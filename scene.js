@@ -131,7 +131,7 @@ function initHeroScene(canvas) {
       const rawSize = new THREE.Vector3();
       rawBox.getSize(rawSize);
       const maxDim = Math.max(rawSize.x, rawSize.y, rawSize.z) || 1;
-      const targetSize = 2.34; // 2.6 réduit de 10%
+      const targetSize = 2.1; // encore réduit, pour ne plus toucher "PORTFOLIO"
       model.scale.setScalar(targetSize / maxDim);
 
       // 2) Recentre le modèle sur le centre de sa boîte englobante — son
@@ -184,12 +184,19 @@ function initHeroScene(canvas) {
     const distance = Math.max(distV, distH) * margin;
 
     // Conserve l'angle de vue actuel (utile si on refait le cadrage après
-    // une rotation manuelle) : on ne fait que rallonger/raccourcir la
-    // distance caméra le long de sa direction actuelle vers la cible.
-    const dir = camera.position.clone().sub(controls.target);
+    // une rotation manuelle) — calculé par rapport à l'ORIGINE (le vrai
+    // centre géométrique de la flamme, toujours fixe), PAS par rapport à
+    // `controls.target` : ce dernier peut être volontairement décalé
+    // pour le cadrage vertical, et s'en servir ici ferait dériver
+    // l'angle/la distance à chaque appel plutôt que de le préserver.
+    const origin = new THREE.Vector3(0, 0, 0);
+    const dir = camera.position.clone().sub(origin);
     if (dir.lengthSq() === 0) dir.set(0, 0, 1);
     dir.normalize().multiplyScalar(distance);
-    camera.position.copy(controls.target).add(dir);
+    camera.position.copy(origin).add(dir);
+    // Le point VISÉ (controls.target), lui, peut être décalé de
+    // l'origine pour le cadrage — orientation mise à jour en conséquence.
+    camera.lookAt(controls.target);
     camera.updateProjectionMatrix();
   }
 
@@ -224,31 +231,27 @@ function initHeroScene(canvas) {
     const rect = stage.getBoundingClientRect();
     const w = rect.width;
     const h = rect.height;
+    // Garde-fou : si le stage a une taille nulle (peut arriver au tout
+    // premier appel, avant que la mise en page / `100dvh` ne soit
+    // stabilisée), on ignore cet appel plutôt que de calculer un aspect
+    // ratio infini/NaN qui corromprait durablement la caméra (flamme
+    // énorme et floue, même après un resize valide plus tard).
+    if (!w || !h) return;
     renderer.setSize(w, h, false);
-    camera.aspect = w / h;
+    camera.aspect = Math.min(4, Math.max(0.25, w / h)); // borné : une valeur extrême déforme le shader de fumée (uAspect)
+
+    // Décalage vertical FIXE (pas de mesure du nav/texte en DOM) : plus
+    // fiable, ne dépend d'aucun autre élément de la page ni du timing de
+    // sa mise en page. `controls.target` (le point regardé) est placé
+    // légèrement EN DESSOUS du vrai centre du modèle (origine 0,0,0) —
+    // la caméra vise donc un peu plus bas, ce qui fait remonter la
+    // flamme dans le cadre. Fixé AVANT fitCameraToFlame() pour que son
+    // calcul de distance/direction soit cohérent avec ce point visé.
+    const verticalBias = flameRadius * 0.88;
+    controls.target.set(0, -verticalBias, 0);
+
     fitCameraToFlame();
     camera.clearViewOffset();
-    camera.updateProjectionMatrix();
-
-    // Le pivot de la flamme (controls.target, à l'origine) est maintenant
-    // le centre de sa boîte englobante (voir plus haut) — et la caméra
-    // regardant TOUJOURS pile ce point, il projette par construction en
-    // plein centre du cadre (w/2, h/2), à N'IMPORTE QUEL angle de
-    // rotation. Donc pas de décalage horizontal à calculer : elle est
-    // structurellement centrée. Il ne reste qu'à décaler VERTICALEMENT
-    // pour caler ce centre dans l'espace vide entre la nav (haut) et le
-    // bloc "PORTFOLIO" (bas), avec le même espace au-dessus et en dessous.
-    const navEl = document.querySelector(".nav");
-    const textEl = document.querySelector(".hero__text");
-    let shiftY = 0;
-    if (navEl && textEl) {
-      const navBottom = navEl.getBoundingClientRect().bottom;
-      const textTop = textEl.getBoundingClientRect().top;
-      const gapCenter = (navBottom + textTop) / 2 - rect.top;
-      shiftY = h / 2 - gapCenter;
-    }
-
-    camera.setViewOffset(w, h, 0, shiftY, w, h);
     camera.updateProjectionMatrix();
 
     const drawSize = renderer.getDrawingBufferSize(new THREE.Vector2());
