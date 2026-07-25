@@ -117,7 +117,7 @@ body {
   margin: 0 auto;
   min-height: 100vh;
   background: var(--bg);
-  overflow-x: clip;
+  overflow: clip;
 }
 @media (min-width: 561px) {
   .frame { box-shadow: 0 0 120px rgba(0,0,0,0.7); }
