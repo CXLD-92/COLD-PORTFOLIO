@@ -176,7 +176,15 @@ function initHeroScene(canvas) {
    * l'objet sur les bords gauche/droite.
    */
   function fitCameraToFlame() {
-    const margin = 1.22; // marge autour de la flamme
+    // Caméra en auto-cadrage : `margin` contrôle directement la taille
+    // apparente de la flamme à l'écran (la caméra recule/avance pour
+    // compenser toute variation de `targetSize` plus haut, donc changer
+    // l'échelle du modèle seule n'aurait aucun effet visible ici).
+    // 1.22 → 1.525 = ×1.25 sur la distance caméra, ce qui réduit la
+    // taille apparente de la flamme d'environ 20% (radius/distance
+    // divisé par 1.25 ≈ ×0.8), sans déplacer son centre : l'origine
+    // (0,0,0), donc sa position à l'écran, ne change pas.
+    const margin = 1.525; // marge autour de la flamme
     const vFov = (camera.fov * Math.PI) / 180;
     const distV = flameRadius / Math.sin(vFov / 2);
     const hFov = 2 * Math.atan(Math.tan(vFov / 2) * camera.aspect);

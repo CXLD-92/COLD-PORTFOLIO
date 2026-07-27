@@ -104,6 +104,73 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ============================================================
+   PRELOADER
+   Écran noir plein écran, centré, affiché tant que le modèle 3D
+   (assets/models/flame.glb), les polices custom et les images du
+   DOM ne sont pas prêts — voir js/preload.js. Une petite flamme
+   blanche (SVG statique) respire doucement au-dessus de la barre de
+   progression pendant l'attente.
+   `z-index` au-dessus de tout, y compris `.grain` (999, la valeur la
+   plus haute utilisée ailleurs) et `.menu-overlay` (100).
+   ============================================================ */
+html.is-loading,
+html.is-loading body {
+  overflow: hidden; /* pas de scroll tant que l'écran de chargement est visible */
+}
+
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  background: #000;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+.preloader.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Flamme blanche, statique (assets/img/flamme.svg, inlinée pour la
+   couleur), en tout petit au-dessus de la barre — légère respiration
+   pour signaler l'attente sans distraire. */
+.preloader__flame {
+  width: 22px;
+  height: auto;
+  animation: preloader-breathe 1.6s ease-in-out infinite;
+}
+
+@keyframes preloader-breathe {
+  0%, 100% { opacity: 0.55; transform: scale(0.94); }
+  50%      { opacity: 1;    transform: scale(1); }
+}
+
+.preloader__bar {
+  width: 84px;
+  height: 2px;
+  background: rgba(245, 243, 238, 0.14);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.preloader__bar-fill {
+  width: 0%;
+  height: 100%;
+  background: var(--ink);
+  border-radius: inherit;
+  transition: width 0.25s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .preloader__bar-fill { transition: none; }
+  .preloader__flame { animation: none; opacity: 1; transform: none; }
+}
+
 /* Le site est conçu mobile pour l'instant (version desktop à venir).
    Ce cadre simule/contraint le rendu à une largeur mobile, y compris
    sur grand écran, et sert de repère de containment pour les éléments
@@ -249,7 +316,7 @@ textarea:focus-visible {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: clamp(12px, 2.2vw, 20px) var(--gutter);
+  padding: clamp(18px, 3.4vw, 28px) var(--gutter);
   color: var(--ink);
   background: transparent;
   mix-blend-mode: difference; /* sur le hero : reste lisible par-dessus la scène 3D/le texte, quel que soit le contenu en dessous */
@@ -300,11 +367,16 @@ textarea:focus-visible {
    qu'on est sur le hero, révélé une fois qu'on a scrollé. */
 .nav__logo {
   position: absolute;
-  left: var(--gutter);
+  /* Le padding ci-dessous agrandit la zone cliquable sans déplacer la
+     marque visible : on recule le point d'ancrage de la même valeur
+     (10px) que le padding, pour que le logo reste pile aligné sur le
+     gutter, comme avant. */
+  left: calc(var(--gutter) - 10px);
   top: 50%;
   transform: translateY(-50%);
   display: flex;
   align-items: center;
+  padding: 10px;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.25s ease;
@@ -314,7 +386,11 @@ textarea:focus-visible {
   pointer-events: auto;
 }
 .nav__logo img {
-  height: clamp(30px, 6vw, 38px);
+  /* Agrandi (était 30–38px) : plus facile à toucher sur mobile, en
+     cohérence avec la nav plus épaisse ci-dessus. Avec le padding de
+     10px sur .nav__logo, la zone cliquable atteint ~56–66px de haut,
+     confortablement au-dessus du minimum recommandé (44px). */
+  height: clamp(38px, 7.6vw, 48px);
   width: auto;
   display: block;
 }
@@ -364,6 +440,16 @@ textarea:focus-visible {
   pointer-events: none;
   transition: opacity 0.35s ease;
   overflow-y: auto;
+  /* Bloque catégoriquement tout débordement horizontal, quelle qu'en
+     soit la cause (barre de scroll desktop qui décale les unités vw,
+     arrondi de police, débordement d'un glyphe italique...) : avec
+     `overflow-y: auto` seul, `overflow-x` bascule automatiquement sur
+     un comportement non-`visible` (règle CSS standard), ce qui rendait
+     tout contenu dépassant le bord droit "scrollable" mais invisible
+     sans le savoir — d'où la croix de fermeture et les lignes qui
+     semblaient coupées. Avec `hidden` explicite, c'est un simple clip
+     net au bord, jamais un contenu caché hors champ. */
+  overflow-x: hidden;
 }
 .menu-overlay.is-open {
   opacity: 1;
@@ -413,6 +499,16 @@ textarea:focus-visible {
   flex-wrap: wrap;
   column-gap: 8px;
   padding-top: clamp(40px, 9vw, 54px);
+  /* Petite marge de respiration à droite : `.menu-overlay` a un
+     `overflow-y: auto` (voir plus bas) qui force le navigateur à
+     traiter aussi `overflow-x` comme non-`visible` (règle standard :
+     dès qu'un seul des deux axes n'est pas `visible`, l'autre bascule
+     sur `auto`) — sans cette marge, les derniers caractères des sous-
+     titres en italique (dont le galbe déborde légèrement de leur boîte
+     de texte) se faisaient rogner pile au bord droit du conteneur.
+     Impact visuel nul : la ligne (70% de large, poussée à droite)
+     recule d'autant, imperceptible sur un écran mobile. */
+  padding-right: clamp(20px, 5vw, 32px);
   color: var(--ink);
   transition: opacity 0.2s ease;
 }
@@ -423,6 +519,12 @@ textarea:focus-visible {
   font-weight: 400;
   text-transform: uppercase;
   font-size: clamp(30px, 8.4vw, 42px);
+  /* Sans ce line-height serré, le line-height hérité (1.5, du body)
+     laissait un gros espace vide sous le texte (la "boîte de ligne"
+     d'une police à 42px avec line-height 1.5 fait ~63px de haut,
+     bien plus que le texte visible) — d'où la ligne qui semblait
+     collée beaucoup trop bas malgré son petit margin-top ci-dessous. */
+  line-height: 1;
 }
 .menu-overlay__item-sub {
   font-family: var(--font-ui); /* Oswald medium italique */
@@ -431,6 +533,16 @@ textarea:focus-visible {
   font-size: clamp(15px, 4vw, 18px);
   color: var(--ink);
   opacity: 0.85;
+  line-height: 1; /* même correctif que le titre ci-dessus */
+  /* Buffer directement sur le texte italique, en plus du padding-right
+     de .menu-overlay__item : le galbe des glyphes en italique déborde
+     de l'"advance width" calculée par le navigateur, donc même avec de
+     la marge sur le conteneur, le dernier caractère pouvait encore se
+     faire rogner par overflow-x:hidden sur .menu-overlay. En em (relatif
+     à la taille de la police), ce buffer s'adapte automatiquement à
+     toutes les tailles générées par le clamp() ci-dessus. */
+  padding-right: 0.2em;
+  display: inline-block;
 }
 
 /* Séparateur : sur sa propre ligne (flex-basis: 100%), collé de près au
@@ -450,16 +562,39 @@ textarea:focus-visible {
 .menu-overlay__insta {
   position: relative;
   z-index: 5; /* garantit qu'elle reste au-dessus de tout élément voisin du menu */
-  margin-top: auto;
+  /* `margin-top: auto` posait problème : à l'intérieur d'un conteneur
+     flex qui scrolle (.menu-overlay a `overflow-y: auto`), une marge
+     automatique se comporte de façon incohérente selon les
+     navigateurs — elle peut s'écraser à 0 ou pousser l'élément hors de
+     la zone de scroll accessible, ce qui rendait l'icône introuvable.
+     Une marge fixe généreuse est fiable partout : elle place toujours
+     l'icône juste après le dernier item, atteignable en scrollant. */
+  margin-top: clamp(48px, 10vw, 72px);
   padding-top: clamp(32px, 7vw, 48px);
+  padding-bottom: clamp(24px, 5vw, 36px); /* évite qu'elle colle au tout bord bas du panneau */
   display: inline-flex;
+  /* Pas de `height` fixe ici : en `box-sizing: border-box` (réglage
+     global), une hauteur de 32px combinée au padding vertical
+     ci-dessus (jusqu'à 48+36=84px à lui seul) forçait la boîte de
+     contenu à une hauteur NÉGATIVE, ramenée à 0 par le navigateur —
+     le SVG enfant (en `height: 100%`) héritait alors de cette hauteur
+     nulle et devenait invisible, alors que le lien restait cliquable
+     via son padding. La taille de l'icône est maintenant fixée
+     directement sur le <svg> lui-même (voir plus bas), indépendamment
+     de la hauteur de ce conteneur.
+  */
   width: 32px;
-  height: 32px;
+  color: var(--ink); /* seule source de couleur : le SVG utilise fill="currentColor" (voir markup) — plus de fill codé en dur en concurrence avec cette règle */
   opacity: 0.9;
   transition: opacity 0.2s ease;
 }
 .menu-overlay__insta:hover { opacity: 1; }
-.menu-overlay__insta svg { width: 100%; height: 100%; display: block; fill: var(--ink); }
+.menu-overlay__insta svg {
+  width: 32px;
+  height: 32px;
+  display: block;
+  fill: currentColor; /* hérite de la couleur posée sur le lien parent — plus de fill="#fff" ni de style inline par <path> concurrents, qui rendaient l'icône invisible selon les navigateurs */
+}
 
 
 /* =========================================================
@@ -1066,11 +1201,22 @@ textarea:focus-visible {
 .contact__row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  /* Aligné sur la marge de .field ci-dessous (22px), pour un espacement
+     identique partout — voir la règle .contact__row > .field qui
+     retire la marge en double sur les champs de cette rangée. */
+  gap: 22px;
+  margin-bottom: 22px;
 }
 @media (max-width: 640px) {
   .contact__row { grid-template-columns: 1fr; }
 }
+/* Sans ça, les champs Nom/E-mail (dans la grille) cumulaient à la fois
+   le `gap` de la grille ET leur propre `margin-bottom` — un espacement
+   quasi double (42px) par rapport aux autres champs (22px, juste leur
+   marge). Ici les champs de la rangée s'appuient uniquement sur `gap`
+   (et sur le margin-bottom de .contact__row pour l'écart avec le champ
+   suivant), exactement comme les champs autonomes. */
+.contact__row > .field { margin-bottom: 0; }
 
 .field { margin-bottom: 22px; }
 .field label {
@@ -1168,11 +1314,122 @@ textarea:focus-visible {
   justify-content: center;
   width: 26px;
   height: 26px;
+  color: var(--ink); /* seule source de couleur, cf. .menu-overlay__insta */
   opacity: 0.9;
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
-.footer__insta svg { width: 100%; height: 100%; display: block; fill: var(--ink); }
+.footer__insta svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  fill: currentColor;
+}
 .footer__insta:hover { opacity: 1; transform: translateY(-1px); }
+
+/* =========================================================
+   PAGES DE SECTION (Certifications / Music / Media / Brand design)
+   Gabarit partagé par certifications.html, music.html, media.html et
+   brand-design.html : nav (état "is-scrolled" fixe, pas de hero à
+   traverser), grand titre de section, 3 carrés empilés menant vers
+   les travaux, footer.
+   ========================================================= */
+.section-hero {
+  text-align: center;
+  /* La nav est `position: fixed` — donc hors du flux normal : elle ne
+     pousse pas ce contenu vers le bas, elle le RECOUVRE. Un padding-top
+     identique au padding-bottom donnait donc un espace visuellement
+     plus PETIT au-dessus du titre (une partie du padding-top est
+     cachée sous la nav) qu'en dessous. --nav-h estime la hauteur
+     réelle de la nav (son padding vertical ×2 + la hauteur du logo,
+     voir .nav / .nav__logo img plus haut) : on l'ajoute au padding-top
+     pour que l'espace RÉELLEMENT VISIBLE sous la nav soit égal à
+     --gap, exactement comme le padding-bottom en dessous du titre. */
+  --nav-h: clamp(74px, 15vw, 104px);
+  --gap: clamp(48px, 10vw, 72px);
+  padding: calc(var(--nav-h) + var(--gap)) var(--gutter) var(--gap);
+}
+.section-hero__title {
+  /* Taille FIXE, commune aux 4 pages (Certifications / Music / Media /
+     Brand design) — volontairement grande, ce sont des titres — et
+     centrée. Un mot long ("Certifications") passe simplement à la
+     ligne si besoin sur mobile plutôt que de rétrécir : mieux vaut ça
+     qu'un titre à taille variable d'une page à l'autre. */
+  font-family: var(--font-display); /* Edition */
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: clamp(56px, 20cqw, 110px);
+  /* Même valeur que .hero__title (déjà calibrée pour cette police
+     "Edition" spécifique) : en majuscules, le texte n'utilise jamais
+     l'espace réservé aux jambages de minuscules en bas de ligne — cet
+     espace fantôme, invisible mais bien réel, décalait le texte vers
+     le haut dans sa boîte et rendait le padding pourtant symétrique
+     visuellement inégal (plus d'air en dessous qu'au-dessus). */
+  line-height: 0.82;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.section-projects {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 5vw, 32px);
+  padding: 0 var(--gutter) clamp(72px, 13vw, 110px);
+}
+
+/* Carré-bouton vers un travail : image de fond (dégradé de substitution
+   pour l'instant, comme les cartes du carrousel "Work" en accueil —
+   voir README) + bandeau dégradé en bas portant le titre, en lien
+   direct (toute la carte est cliquable). */
+.project-card {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / 1;
+  border-radius: 3px;
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow: 0 22px 44px rgba(0, 0, 0, 0.55);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.project-card:hover,
+.project-card:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 28px 52px rgba(0, 0, 0, 0.6);
+}
+.project-card__media {
+  position: absolute;
+  inset: 0;
+  filter: grayscale(0.1);
+}
+.project-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.project-card[data-tone="warm"] .project-card__media { background: #4a3a2c; }
+.project-card[data-tone="cool"] .project-card__media { background: #2b3138; }
+.project-card[data-tone="dark"] .project-card__media { background: #201c18; }
+
+/* Bandeau : dégradé sombre bas → transparent, pour que le titre reste
+   lisible quelle que soit l'image derrière — même logique que
+   .work-card::after en accueil. */
+.project-card__band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  padding: clamp(18px, 4.6vw, 26px) clamp(18px, 4.6vw, 24px);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.25) 55%, transparent 100%);
+}
+.project-card__title {
+  font-family: var(--font-ui); /* Oswald */
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  font-size: clamp(19px, 4.8vw, 25px);
+  color: var(--ink);
+}
 
 /* =========================================================
    Reveal on scroll

@@ -8,11 +8,16 @@ responsive desktop se fera dans une prochaine itération.
 
 ```
 portfolio/
-├── index.html                 page unique (hero, à propos, work, trusted by, contact)
+├── index.html                  page d'accueil (hero, à propos, work, trusted by, contact)
+├── certifications.html         page de section — 3 travaux "Certifications"
+├── music.html                  page de section — 3 travaux "Music"
+├── media.html                  page de section — 3 travaux "Media"
+├── brand-design.html           page de section — 3 travaux "Brand design"
 ├── css/style.css               tous les styles + tokens (couleurs, typos, espacements)
 ├── js/
+│   ├── preload.js              écran de chargement (avant la landing page)
 │   ├── scene.js                scène 3D (flamme chromée interactive + fumée)
-│   └── main.js                 nav, animations au scroll, envoi du formulaire
+│   └── main.js                 nav, menu, animations au scroll, envoi du formulaire
 └── assets/
     ├── models/flame.glb        ton modèle 3D (fourni)
     ├── fonts/                  dépose ici EDITION & Pressio (voir fonts/README.md)
@@ -36,6 +41,26 @@ python3 -m http.server 8000
 ```
 
 ou avec Node : `npx serve .`
+
+## Écran de chargement
+
+Avant d'atterrir sur la landing page, un écran noir plein écran et
+centré s'affiche : une petite flamme blanche (SVG statique, qui
+respire doucement) au-dessus d'une fine barre blanche qui se remplit
+(`js/preload.js`).
+
+- Il attend le chargement réel du modèle 3D (`flame.glb`), des polices
+  custom (Edition/Pressio) et des images déjà présentes dans la page,
+  PLUS une durée d'affichage minimale (1.6s) même si tout est prêt
+  avant — pour laisser le temps de voir l'écran plutôt qu'un flash.
+- Le suivi du modèle 3D n'ajoute aucun téléchargement supplémentaire :
+  `js/preload.js` observe simplement `THREE.DefaultLoadingManager`,
+  que `scene.js` utilise par défaut pour charger `flame.glb`.
+- Filet de sécurité intégré : si un asset traîne ou échoue, l'écran
+  disparaît quand même au bout de 6 secondes maximum, pour ne jamais
+  bloquer l'accès au site.
+- Respecte `prefers-reduced-motion` (transition de la barre + pulsation
+  de la flamme désactivées).
 
 ## La flamme 3D
 
@@ -108,6 +133,26 @@ laisser `FORM_ENDPOINT` vide : Netlify gère l'envoi nativement.
 Le site est 100% statique : tu peux le déposer tel quel sur Netlify,
 Vercel ou GitHub Pages (glisser-déposer le dossier `portfolio/` sur
 Netlify fonctionne directement).
+
+## Pages de section
+
+Chaque catégorie du menu (Certifications, Music, Media, Brand design)
+ouvre sa propre page (`certifications.html`, `music.html`, `media.html`,
+`brand-design.html`), toutes construites sur le même gabarit :
+
+- la nav, toujours affichée dans son état "logo visible + fond plein"
+  (pas de hero 3D à traverser dessous sur ces pages) ;
+- le nom de la section en grand, en police Edition, redimensionné en JS
+  pour occuper toute la largeur (même mécanisme que "PORTFOLIO" en
+  accueil) ;
+- 3 cartes carrées empilées, chacune un lien direct vers un travail —
+  actuellement en fond dégradé de substitution avec juste un titre
+  (à remplacer par les vraies images/pages de projet une fois prêtes) ;
+- le footer.
+
+Le bouton "See more" du carrousel "Work" en accueil ouvre directement
+le menu (au lieu de renvoyer vers le formulaire de contact), pour
+retrouver ces 4 sections en un clic.
 
 ## Prochaines étapes possibles
 

@@ -232,6 +232,9 @@ burger?.addEventListener("click", () => {
   else openMenu();
 });
 menuClose?.addEventListener("click", closeMenu);
+// Le bouton "See more" du carrousel "Work" ouvre directement le menu
+// (la vraie liste des catégories), plutôt que de renvoyer vers #contact.
+document.querySelector("[data-open-menu]")?.addEventListener("click", openMenu);
 // Le logo ("retour à la landing page") et les catégories ferment le menu
 // une fois cliqués, pour qu'on ne reste pas coincé dessus après avoir
 // suivi le lien.
@@ -249,7 +252,7 @@ document.addEventListener("keydown", (e) => {
 // effet l'écraserait entièrement une fois la carte révélée, aplatissant
 // tout l'arc.)
 const revealTargets = document.querySelectorAll(
-  ".about, .work__head, .trusted, .contact__card"
+  ".about, .work__head, .trusted, .contact__card, .section-hero, .project-card"
 );
 revealTargets.forEach((el) => el.setAttribute("data-reveal", ""));
 
@@ -305,10 +308,7 @@ if (workCarousel) {
   const MAX_SCALE_BOOST = 0.05; // grossissement max de la carte au centre
   const MAX_SCALE_SHRINK = 0.02; // quasi rien pour les autres — le focus doit rester ponctuel
 
-  let workFocusTicking = false;
-
   function applyWorkArc() {
-    workFocusTicking = false;
     // Distance calculée à partir de la géométrie de mise en page pure
     // (offsetLeft/scrollLeft), PAS depuis getBoundingClientRect (qui
     // reflète le transform déjà appliqué). Avec `transform-origin: bottom
@@ -347,16 +347,47 @@ if (workCarousel) {
     });
   }
 
-  function requestWorkFocusUpdate() {
-    if (!workFocusTicking) {
-      workFocusTicking = true;
-      requestAnimationFrame(applyWorkArc);
-    }
+  let workLoopRaf = null;
+
+  function workLoopTick() {
+    applyWorkArc();
+    workLoopRaf = requestAnimationFrame(workLoopTick);
+  }
+  function startWorkLoop() {
+    if (workLoopRaf) return;
+    workLoopTick();
+  }
+  function stopWorkLoop() {
+    if (workLoopRaf) cancelAnimationFrame(workLoopRaf);
+    workLoopRaf = null;
   }
 
-  workCarousel.addEventListener("scroll", requestWorkFocusUpdate, { passive: true });
-  window.addEventListener("resize", requestWorkFocusUpdate);
-  window.addEventListener("load", applyWorkArc);
+  // Boucle continue plutôt qu'un recalcul déclenché par l'événement
+  // `scroll` : pendant un scroll inertiel (relâcher le doigt sur
+  // mobile), le navigateur peut espacer/regrouper les événements
+  // `scroll` de façon irrégulière, ce qui donnait des à-coups visibles
+  // sur la rotation/l'élévation des cartes. En lisant `scrollLeft` à
+  // chaque frame de rendu (rAF) au lieu d'attendre l'événement, l'arc
+  // reste parfaitement synchronisé avec le défilement natif, aussi
+  // fluide que le scroll lui-même.
+  // La boucle ne tourne que pendant que le carrousel est visible à
+  // l'écran (IntersectionObserver) : coût nul le reste du temps.
+  if ("IntersectionObserver" in window) {
+    const workVisibility = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) startWorkLoop();
+          else stopWorkLoop();
+        });
+      },
+      { threshold: 0.01 }
+    );
+    workVisibility.observe(workCarousel);
+  } else {
+    // Filet de sécurité pour les très vieux navigateurs sans IntersectionObserver.
+    startWorkLoop();
+  }
+
   applyWorkArc();
 
   // ---- Flèches précédente/suivante ----
@@ -431,13 +462,11 @@ if (workCarousel) {
 
 // ---------- Formulaire de contact ----------
 //
-// Aucun backend maison : le formulaire poste vers un service tiers.
-// Remplace la valeur de FORM_ENDPOINT par l'URL de ton formulaire
-// Formspree (https://formspree.io) une fois ton compte créé, par ex :
-//   const FORM_ENDPOINT = "https://formspree.io/f/xxxxxxx";
-// Tant que ce n'est pas configuré, le formulaire affiche un message
-// clair au lieu d'échouer silencieusement.
-const FORM_ENDPOINT = ""; // ← à compléter
+// Aucun backend maison : le formulaire poste vers Formspree
+// (https://formspree.io), configuré pour envoyer à cold.prod28@gmail.com.
+// Pour changer d'adresse ou de compte Formspree plus tard, remplace
+// simplement la valeur de FORM_ENDPOINT ci-dessous par la nouvelle URL.
+const FORM_ENDPOINT = "https://formspree.io/f/xpqvbabv";
 
 const form = document.getElementById("contact-form");
 const statusEl = document.getElementById("contact-status");
