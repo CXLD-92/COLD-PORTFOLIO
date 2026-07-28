@@ -41,7 +41,10 @@ function runPreloader(preloader) {
   // ---------- Durée d'affichage minimale ----------
   // Un tout petit peu plus long qu'un simple flash : même si tout est
   // prêt instantanément, l'écran reste visible au moins MIN_DISPLAY ms.
-  const MIN_DISPLAY = 1600;
+  // Volontairement court (abaissé de 1600 à 500ms) : au-delà de ce
+  // minimum, chaque ms passée ici s'ajoute directement au temps de
+  // chargement perçu, surtout sensible sur mobile/réseau lent.
+  const MIN_DISPLAY = 500;
   const startTime = performance.now();
 
   // ---------- Progrès pondéré : GLB + polices + images ----------
@@ -111,8 +114,11 @@ function runPreloader(preloader) {
 
   // ---- Filet de sécurité ----
   // Si un asset traîne ou échoue silencieusement, on ne laisse jamais
-  // l'écran de chargement bloquer l'accès au site.
-  const MAX_WAIT = 6000;
+  // l'écran de chargement bloquer l'accès au site. Abaissé de 6000 à
+  // 4000ms : sur mobile, mieux vaut révéler le site (quitte à ce que
+  // le modèle 3D finisse de se charger discrètement derrière) que de
+  // faire poireauter la personne sur l'écran de chargement.
+  const MAX_WAIT = 4000;
   const safety = setTimeout(() => {
     markDone("glb");
     markDone("fonts");

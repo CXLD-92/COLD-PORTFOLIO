@@ -8,6 +8,17 @@
 
 <link rel="stylesheet" href="style.css" />
 
+<!-- Préchargement des assets bloquants pour l'écran de chargement (voir
+     preload.js) : sans ça, le navigateur ne démarre leur téléchargement
+     qu'une fois le CSS entièrement parsé et la police/le modèle
+     réellement demandés par le rendu — ces hints les lancent dès le
+     tout début du chargement de la page, en parallèle du CSS, ce qui
+     raccourcit d'autant le temps réel passé sur l'écran de chargement
+     (perceptible surtout sur mobile / réseau lent). -->
+<link rel="preload" href="assets/fonts/edition-regular.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="assets/fonts/pressio-regular.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="assets/models/flame.glb" as="fetch" type="model/gltf-binary" crossorigin />
+
 <!-- Import map : "three" pointe vers la copie locale, aucune dépendance CDN externe -->
 <script type="importmap">
 {

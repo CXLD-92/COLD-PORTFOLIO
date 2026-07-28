@@ -227,8 +227,8 @@ function initHeroScene(canvas) {
   //     le texte, pour plus d'immersion (comme si on regardait la flamme
   //     à travers un peu de fumée).
   const smokeNoiseTex = buildNoiseTexture();
-  const smokeBack = buildSmoke({ distance: 18, scale: 46, density: 0.62, speed: 1.0, noiseTex: smokeNoiseTex });
-  const smokeFront = buildSmoke({ distance: 3.4, scale: 9, density: 0.272, speed: 1.35, noiseTex: smokeNoiseTex });
+  const smokeBack = buildSmoke({ distance: 18, scale: 46, density: 0.46, speed: 1.0, noiseTex: smokeNoiseTex });
+  const smokeFront = buildSmoke({ distance: 3.4, scale: 9, density: 0.2, speed: 1.35, noiseTex: smokeNoiseTex });
   camera.add(smokeBack.mesh);
   camera.add(smokeFront.mesh);
   scene.add(camera); // une caméra doit être dans la scène pour que ses enfants soient rendus
@@ -610,7 +610,11 @@ function buildSmoke({ distance = 18, scale = 46, density = 1, speed = 1, noiseTe
         density = clamp(density * uDensity, 0.0, 1.0);
 
         vec3 dark = vec3(0.05, 0.05, 0.06);
-        vec3 light = vec3(0.93, 0.94, 0.96);
+        // Volutes les plus claires assombries (étaient proches du blanc
+        // pur, ~0.93-0.96 — trop visibles/contrastées sur le fond sombre
+        // du hero). Un gris moyen se fond beaucoup mieux dans l'arrière-
+        // plan tout en gardant un peu de relief à la fumée.
+        vec3 light = vec3(0.42, 0.43, 0.46);
         vec3 color = mix(dark, light, clamp(n * 1.15 + 0.15, 0.0, 1.0));
 
         gl_FragColor = vec4(color, density);
