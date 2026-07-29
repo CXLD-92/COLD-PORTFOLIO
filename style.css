@@ -35,6 +35,18 @@
    chargement (surtout sur mobile). */
 
 :root {
+  /* Empêche les navigateurs qui inversent automatiquement les pages
+     claires quand le mode sombre du téléphone est activé (fonction
+     "Forcer le mode sombre" d'Android Chrome / Samsung Internet, entre
+     autres) de s'appliquer ici. Sans cette ligne, ces navigateurs ne
+     savent pas que le contraste clair de .contact__card (voir plus
+     bas) est un choix de design assumé — ils le traitent comme une
+     page "non adaptée au mode sombre" et le réinversent (fond blanc
+     cassé + texte noir devenant fond noir + texte blanc), cassant le
+     contraste voulu avec le reste du site, déjà sombre. Cette
+     déclaration dit explicitement au navigateur : ce site gère déjà
+     ses propres couleurs, n'y touche pas. */
+  color-scheme: only light;
   /* ---- Couleurs ---- */
   --bg:        #08080a;   /* noir chaud, quasi-noir */
   --bg-soft:   #111113;
@@ -1119,7 +1131,11 @@ textarea:focus-visible {
 }
 .trusted__track {
   display: flex;
+  align-items: center;
   width: max-content;
+  gap: clamp(16px, 3vw, 28px); /* même valeur que .trusted__group : la
+    jointure entre les deux groupes dupliqués suit exactement le même
+    rythme que l'intérieur d'un groupe, aucune coupure visible. */
   animation: trusted-scroll 28s linear infinite;
   will-change: transform;
   -webkit-backface-visibility: hidden;
@@ -1129,16 +1145,39 @@ textarea:focus-visible {
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  gap: clamp(24px, 5vw, 44px);
-  padding-right: clamp(24px, 5vw, 44px);
+  gap: clamp(16px, 3vw, 28px);
 }
-/* Hauteur fixe, largeur libre : chaque logo est mis à la même échelle
-   visuelle quelles que soient ses proportions d'origine. */
+/* Hauteur fixe + largeur maximale plafonnée : un wordmark large ne
+   peut plus dominer visuellement un logo compact, mais chaque logo
+   garde ses proportions naturelles — pas de boîte avec du vide autour,
+   donc l'espacement (géré uniquement par `gap`) reste rigoureusement
+   égal entre chaque élément, logo ou puce.
+   filter: brightness(0) invert(1) force chaque logo en blanc pur,
+   quelle que soit la couleur d'origine du SVG source (certains logos
+   ne sont pas encodés en currentColor) — garantit un rendu blanc
+   uniforme sur tout le bandeau. */
 .trusted__logo {
-  height: clamp(38px, 4.8vw, 54px);
+  height: clamp(40px, 5vw, 56px);
   width: auto;
+  max-width: clamp(90px, 10vw, 140px);
+  object-fit: contain;
   flex-shrink: 0;
-  opacity: 1; /* blanc plein, comme le reste des éléments de la page */
+  opacity: 1;
+  filter: brightness(0) invert(1);
+}
+/* Puce séparatrice entre chaque logo, y compris à la jointure entre
+   les deux groupes dupliqués du bandeau (boucle infinie) : le rythme
+   logo → puce → logo est ainsi identique sur toute la piste. Blanc
+   plein (#fff), pas la teinte --ink légèrement chaude utilisée
+   ailleurs sur le site. */
+.trusted__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 1;
+  flex-shrink: 0;
+  align-self: center;
 }
 
 @keyframes trusted-scroll {
@@ -1146,7 +1185,8 @@ textarea:focus-visible {
   to { transform: translateX(0); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .trusted__track { animation: none; }
+  .trusted__track { animation: none; width: 100%; justify-content: center; }
+  .trusted__group[aria-hidden="true"] { display: none; } /* groupe dupliqué inutile sans le défilement */
 }
 
 /* =========================================================
@@ -1365,11 +1405,29 @@ textarea:focus-visible {
    menu qui y a mené. Pas d'italique ici (contrairement au menu) : sur
    un titre déjà très grand, l'accent italique est réservé au menu. */
 .section-hero__subtitle {
-  font-family: var(--font-serif); /* Pressio */
+  /* Oswald plutôt que Pressio (var(--font-serif)) : la serif fine
+     rendait la phrase complète difficile à lire d'un coup d'œil,
+     surtout sur mobile. Oswald, la police utilisée partout ailleurs
+     pour le texte fonctionnel du site, reste bien plus lisible ici. */
+  font-family: var(--font-ui); /* Oswald */
+  /* Regular plutôt que medium, et couleur adoucie (--muted) plutôt que
+     blanc pur : en médium blanc plein, à cette taille, le sous-titre
+     rivalisait visuellement avec le grand titre juste au-dessus au
+     lieu de rester secondaire — moins de poids ici installe une vraie
+     hiérarchie (le regard va d'abord au titre, puis se pose sur la
+     description) et rend l'ensemble plus posé. */
   font-weight: 400;
-  color: var(--ink);
-  font-size: clamp(23px, 6.4vw, 31px);
-  margin: clamp(6px, 1.4vw, 10px) 0 0;
+  color: var(--muted);
+  /* Recentrée : la laisser à gauche sous un titre centré cassait la
+     symétrie de toute la page et sautait aux yeux comme une erreur de
+     mise en page plutôt qu'un choix. Centrée, elle prolonge l'axe du
+     titre — plus posé, plus "designé". */
+  text-align: center;
+  font-size: clamp(16px, 4.2vw, 20px);
+  font-style: italic;
+  line-height: 1.5;
+  max-width: 38ch;
+  margin: clamp(14px, 3vw, 20px) auto 0;
 }
 
 .section-projects {

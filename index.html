@@ -6,6 +6,7 @@
 <title>Kylian B. — Portfolio | Independent Graphic Designer</title>
 <meta name="description" content="Kylian B. — Direction artistique, branding, logotype, graphisme." />
 
+<meta name="color-scheme" content="only light" />
 <link rel="stylesheet" href="style.css" />
 
 <!-- Préchargement des assets bloquants pour l'écran de chargement (voir
@@ -17,7 +18,18 @@
      (perceptible surtout sur mobile / réseau lent). -->
 <link rel="preload" href="assets/fonts/edition-regular.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="preload" href="assets/fonts/pressio-regular.woff2" as="font" type="font/woff2" crossorigin />
-<link rel="preload" href="assets/models/flame.glb" as="fetch" type="model/gltf-binary" crossorigin />
+<link rel="preload" href="assets/models/flame.glb" as="fetch" type="model/gltf-binary" crossorigin fetchpriority="high" />
+
+<!-- Précharge aussi les modules JS eux-mêmes (three.js + les 3 scripts
+     de la page) : sans ça, le navigateur ne les découvre qu'en lisant
+     les balises <script type="module"> tout en bas du document, donc
+     après avoir fini de parser tout le HTML au-dessus. `modulepreload`
+     les récupère (et les prépare à l'exécution) dès maintenant, en
+     parallèle de tout le reste. -->
+<link rel="modulepreload" href="assets/vendor/three/three.module.min.js" />
+<link rel="modulepreload" href="preload.js" />
+<link rel="modulepreload" href="scene.js" />
+<link rel="modulepreload" href="main.js" />
 
 <!-- Import map : "three" pointe vers la copie locale, aucune dépendance CDN externe -->
 <script type="importmap">
@@ -210,12 +222,13 @@
       <img class="about__shape" src="assets/img/about-shape.svg" alt="" aria-hidden="true" />
     </div>
     <p class="about__text">
-      I'm a French graphic designer working under the name COLD PRODUCTION.
-      I specialize in visual identity for the music industry from certification awards
-      to album artwork and brand design. Over the past two years, I've had the chance
-      to work with artists, medias, and businesses across Europe, always aiming for
-      visuals that feel sharp, and unmistakably original. Every project is an opportunity
-      to turn an idea into something that leaves a mark. Let's build something strong together.
+      My name is Kylian, I’m 21 years old, and I’m a French graphic designer working under the name COLD PRODUCTION. 
+      I’m a freelance graphic designer specializing in visual identity for the music industry, 
+      including album covers and brand design. Over the past two years, I’ve had the opportunity 
+      to work with influential artists, major media outlets, and companies across Europe, which has 
+      allowed me to grow while striving to create striking visuals with undeniable originality. 
+      Every project is a chance to transform an idea into something that leaves a lasting impression. 
+      Let’s build something powerful together.
     </p>
   </div>
 
@@ -240,7 +253,7 @@
       <div class="work__head-row">
         <h2 class="work__title">Work</h2>
         <button class="work__cta" type="button" data-open-menu>
-          <span>See more</span>
+          <span>My projects</span>
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
       </div>
@@ -284,20 +297,32 @@
   <div class="trusted__marquee">
     <div class="trusted__track">
       <div class="trusted__group">
-        <img class="trusted__logo" src="assets/img/logos/vacra.svg" alt="Vacra" />
+        <img class="trusted__logo" src="assets/img/logos/1d1r.svg" alt="1D1R" />
+        <span class="trusted__dot" aria-hidden="true"></span>
         <img class="trusted__logo" src="assets/img/logos/himra.svg" alt="Himra" />
+        <span class="trusted__dot" aria-hidden="true"></span>
         <img class="trusted__logo" src="assets/img/logos/karmen.svg" alt="Karmen" />
+        <span class="trusted__dot" aria-hidden="true"></span>
         <img class="trusted__logo" src="assets/img/logos/lafouine.svg" alt="La Fouine" />
+        <span class="trusted__dot" aria-hidden="true"></span>
         <img class="trusted__logo" src="assets/img/logos/rk.svg" alt="RK" />
+        <span class="trusted__dot" aria-hidden="true"></span>
         <img class="trusted__logo" src="assets/img/logos/wixola.svg" alt="Wixola" />
+        <span class="trusted__dot" aria-hidden="true"></span>
       </div>
       <div class="trusted__group" aria-hidden="true">
-        <img class="trusted__logo" src="assets/img/logos/vacra.svg" alt="" />
+        <img class="trusted__logo" src="assets/img/logos/1d1r.svg" alt="" />
+        <span class="trusted__dot" aria-hidden="true"></span>
         <img class="trusted__logo" src="assets/img/logos/himra.svg" alt="" />
+        <span class="trusted__dot" aria-hidden="true"></span>
         <img class="trusted__logo" src="assets/img/logos/karmen.svg" alt="" />
+        <span class="trusted__dot" aria-hidden="true"></span>
         <img class="trusted__logo" src="assets/img/logos/lafouine.svg" alt="" />
+        <span class="trusted__dot" aria-hidden="true"></span>
         <img class="trusted__logo" src="assets/img/logos/rk.svg" alt="" />
+        <span class="trusted__dot" aria-hidden="true"></span>
         <img class="trusted__logo" src="assets/img/logos/wixola.svg" alt="" />
+        <span class="trusted__dot" aria-hidden="true"></span>
       </div>
     </div>
   </div>
