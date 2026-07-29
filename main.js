@@ -245,6 +245,23 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeMenu();
 });
 
+// ---------- Bouton "retour en haut" ----------
+// Générique : s'active tout seul sur n'importe quelle page qui contient
+// le bouton dans son markup (pas seulement les pages "case study").
+const backToTopBtn = document.querySelector(".back-to-top");
+if (backToTopBtn) {
+  const SHOW_AFTER = 40; // px — apparaît dès qu'on commence à scroller, disparaît une fois de retour tout en haut
+  const toggleBackToTop = () => {
+    backToTopBtn.classList.toggle("is-visible", window.scrollY > SHOW_AFTER);
+  };
+  toggleBackToTop();
+  window.addEventListener("scroll", toggleBackToTop, { passive: true });
+
+  backToTopBtn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
+
 // ---------- Apparitions au scroll ----------
 // (.work-card est volontairement exclu : ces cartes ont leur propre
 // transform fixe — rotation + élévation de l'arc, voir style.css — et
@@ -252,7 +269,7 @@ document.addEventListener("keydown", (e) => {
 // effet l'écraserait entièrement une fois la carte révélée, aplatissant
 // tout l'arc.)
 const revealTargets = document.querySelectorAll(
-  ".about, .work__head, .trusted, .contact__card, .section-hero, .project-card"
+  ".about, .work__head, .trusted, .contact__card, .section-hero, .project-card, .case-hero, .case-section, .case-figure, .case-gallery, .case-meta-strip"
 );
 revealTargets.forEach((el) => el.setAttribute("data-reveal", ""));
 

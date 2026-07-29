@@ -1594,3 +1594,212 @@ textarea:focus-visible {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* =========================================================
+   CASE STUDY — page détail d'un travail (ex. media-120-rap.html)
+   Gabarit dédié aux pages "projet unique" : hero centré (titre +
+   chapô + métadonnées), alternance texte/image en lecture verticale,
+   galerie 2 colonnes pour les déclinaisons, bandeau crédits de
+   fermeture. Réutilise les tokens du reste du site (--gutter,
+   --font-display, --muted…) sans dépendre des classes .about__* /
+   .section-hero__* qui sont couplées à du JS spécifique à la home et
+   aux 4 pages de catégorie.
+   ========================================================= */
+.case-hero {
+  --nav-h: clamp(74px, 15vw, 104px);
+  --gap: clamp(40px, 8vw, 64px);
+  padding: calc(var(--nav-h) + var(--gap)) var(--gutter) 0;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+.case-hero__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 14px;
+  color: var(--ink); /* blanc, pas --muted : le lien de retour doit se voir immédiatement */
+  margin: 0 0 clamp(24px, 5vw, 40px);
+  transition: opacity 0.2s ease, gap 0.2s ease;
+}
+.case-hero__back svg { flex-shrink: 0; width: 20px; height: 20px; transform: rotate(180deg); }
+.case-hero__back:hover { opacity: 0.7; gap: 13px; }
+
+.case-hero__eyebrow {
+  font-family: var(--font-ui);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  font-size: clamp(11px, 1.3vw, 13px);
+  color: var(--muted);
+  margin: 0 0 10px;
+}
+.case-hero__title { margin: 0; }
+/* Le titre affiche le vrai logo du client plutôt que le nom composé
+   en Edition : plus honnête vis-à-vis du travail (c'est LE logotype
+   livré), et évite toute divergence entre le rendu du wordmark et la
+   police d'affichage du site. Fichier vectoriel plat (pas de fond
+   photo) : pas d'ombre portée façon photo, juste un léger drop-shadow
+   pour le détacher du fond sombre. */
+.case-hero__logo {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  margin: 0 auto;
+  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.45));
+}
+.case-hero__lead {
+  max-width: 620px;
+  margin: clamp(20px, 4vw, 28px) auto 0;
+  font-family: var(--font-ui); /* Oswald */
+  font-size: clamp(15px, 1.6vw, 18px);
+  line-height: 1.75;
+  color: var(--muted);
+}
+.case-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(20px, 5vw, 40px);
+  list-style: none;
+  margin: clamp(32px, 6vw, 48px) 0 0;
+  padding: clamp(20px, 4vw, 28px) 0 0;
+  border-top: 1px solid var(--line-soft);
+}
+.case-hero__meta li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--ink);
+}
+.case-hero__meta span {
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+}
+
+/* ---- Rythme vertical partagé ---- */
+/* Une seule valeur de respiration entre TOUS les blocs de contenu
+   (section de texte, figure, galerie), quel que soit leur type — évite
+   tout écart d'espacement d'un enchaînement à l'autre. Chaque bloc ne
+   porte plus sa propre marge verticale ; c'est cette règle, basée sur
+   l'attribut class (tous les blocs "case-*" commencent par ce
+   préfixe), qui l'applique de façon identique entre deux blocs
+   consécutifs quels qu'ils soient. */
+[class^="case-"] + [class^="case-"] { margin-top: clamp(36px, 6vw, 64px); }
+
+/* ---- Figures / images ---- */
+.case-figure {
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 0 var(--gutter);
+}
+.case-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
+}
+.case-figure__caption {
+  margin: 14px auto 0;
+  max-width: 640px;
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ---- Sections de texte ---- */
+.case-section {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  text-align: left;
+}
+/* Titres en Pressio : cette police serif n'est pas dessinée pour être
+   composée en capitales avec un tracking additionnel (contrairement à
+   Edition/Oswald, condensées et conçues pour ça) — l'ajout d'un
+   letter-spacing manuel cassait le rythme naturel des lettres et
+   rendait l'espacement visuellement irrégulier. En casse normale et
+   sans tracking forcé, la police retrouve son espacement d'origine,
+   déjà équilibré par sa fonderie. */
+.case-section__title {
+  font-family: var(--font-serif); /* Pressio */
+  font-weight: 400;
+  font-size: clamp(28px, 5vw, 42px);
+  line-height: 1.2;
+  margin: 0 0 clamp(16px, 3vw, 22px);
+}
+.case-section__text {
+  font-family: var(--font-ui); /* Oswald */
+  font-size: clamp(14px, 1.5vw, 16.5px);
+  line-height: 1.8;
+  color: var(--muted);
+  margin: 0 0 1.4em;
+}
+.case-section__text:last-child { margin-bottom: 0; }
+.case-section__text strong { color: var(--ink); font-weight: 600; }
+/* Dernier bloc de texte avant le footer : sans le bandeau crédits ni
+   le bouton de retour (retirés), il faut recréer cet espace de
+   respiration ici pour ne pas coller le footer au texte. */
+.case-section:last-of-type { padding-bottom: clamp(56px, 10vw, 96px); }
+
+/* ---- Galerie (déclinaisons par thématique, si utilisée groupée) ---- */
+.case-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(20px, 3vw, 32px);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+.case-gallery .case-figure { margin: 0; padding: 0; max-width: none; }
+@media (max-width: 720px) {
+  .case-gallery { grid-template-columns: 1fr; }
+}
+
+/* ---- Bandeau crédits de fermeture ---- */
+.case-meta-strip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(28px, 6vw, 56px);
+  max-width: 900px;
+  margin: clamp(56px, 10vw, 96px) auto 0;
+  padding: clamp(28px, 5vw, 36px) var(--gutter);
+  border-top: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--line-soft);
+}
+.case-meta-strip div { display: flex; flex-direction: column; gap: 4px; text-align: center; }
+.case-meta-strip span {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+}
+.case-meta-strip strong {
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--ink);
+}
+.case-cta-wrap {
+  display: flex;
+  justify-content: center;
+  padding: clamp(40px, 7vw, 56px) var(--gutter) clamp(56px, 10vw, 88px);
+}
