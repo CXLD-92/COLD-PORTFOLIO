@@ -251,11 +251,41 @@ document.addEventListener("keydown", (e) => {
 const backToTopBtn = document.querySelector(".back-to-top");
 if (backToTopBtn) {
   const SHOW_AFTER = 40; // px — apparaît dès qu'on commence à scroller, disparaît une fois de retour tout en haut
-  const toggleBackToTop = () => {
-    backToTopBtn.classList.toggle("is-visible", window.scrollY > SHOW_AFTER);
+  const footerEl = document.querySelector(".footer");
+
+  // ---- Ancrage au-dessus du footer ----
+  // Le bouton est `position: fixed` (hors de .frame — voir style.css) donc
+  // il flotte par-dessus tout le contenu, footer compris, une fois en bas
+  // de page. Dès que le haut du footer entre dans la zone qu'occuperait le
+  // bouton, on bascule sur `position: absolute` avec un `top` calculé en
+  // coordonnées document (voir .is-docked dans style.css) : le bouton se
+  // fige juste au-dessus du footer et remonte avec la page au lieu de
+  // rester collé par-dessus.
+  const getEdge = () => Math.min(28, Math.max(16, window.innerWidth * 0.03)); // réplique clamp(16px, 3vw, 28px) sans dépendre du style calculé du bouton (qui se fausse une fois docké — voir plus bas)
+  const updateDock = () => {
+    if (!footerEl) return;
+    const edge = getEdge();
+    const footerTop = footerEl.getBoundingClientRect().top; // relatif au viewport
+    const wouldOverlap = footerTop < window.innerHeight - edge;
+    if (wouldOverlap) {
+      const footerDocTop = footerTop + window.scrollY;
+      backToTopBtn.style.top = `${footerDocTop - backToTopBtn.offsetHeight - edge}px`;
+      backToTopBtn.style.bottom = "auto";
+      backToTopBtn.classList.add("is-docked");
+    } else {
+      backToTopBtn.style.top = "";
+      backToTopBtn.style.bottom = "";
+      backToTopBtn.classList.remove("is-docked");
+    }
   };
-  toggleBackToTop();
-  window.addEventListener("scroll", toggleBackToTop, { passive: true });
+
+  const onScroll = () => {
+    backToTopBtn.classList.toggle("is-visible", window.scrollY > SHOW_AFTER);
+    updateDock();
+  };
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", updateDock);
 
   backToTopBtn.addEventListener("click", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
