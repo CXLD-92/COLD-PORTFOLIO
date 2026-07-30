@@ -299,7 +299,7 @@ if (backToTopBtn) {
 // effet l'écraserait entièrement une fois la carte révélée, aplatissant
 // tout l'arc.)
 const revealTargets = document.querySelectorAll(
-  ".about, .work__head, .trusted, .contact__card, .section-hero, .project-card, .case-hero, .case-section, .case-figure, .case-gallery, .case-meta-strip"
+  ".about, .work__head, .trusted, .contact__card, .section-hero, .project-card, .case-hero, .case-section, .case-figure, .case-gallery, .case-meta-strip, .case-colors"
 );
 revealTargets.forEach((el) => el.setAttribute("data-reveal", ""));
 

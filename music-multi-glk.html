@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MULTI — GLK | Cover design & typography | Cold Production</title>
+<meta name="description" content="Kylian B. — Cover design and custom-built typography for GLK's single MULTI." />
+
+<meta name="color-scheme" content="only light" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<!-- En dehors de .frame volontairement : .frame a un `transform` (pour
+     l'accélération GPU du rendu 3D), qui casse `position: fixed` sur ses
+     descendants — un nav fixed à l'intérieur scrollerait avec le reste
+     du contenu au lieu de rester épinglé à l'écran. -->
+<header class="nav is-scrolled">
+  <div class="nav__lang" role="group" aria-label="Langue">
+    <button class="nav__lang-btn" type="button" data-lang="fr" aria-pressed="false">FR</button>
+    <button class="nav__lang-btn is-active" type="button" data-lang="en" aria-pressed="true">EN</button>
+  </div>
+
+  <a class="nav__logo" href="index.html" aria-label="Back to top">
+    <img src="assets/img/logo-mark.svg" alt="Cold Production" />
+  </a>
+
+  <nav class="nav__links" aria-label="Navigation principale">
+    <a href="index.html#work">Work</a>
+    <a href="index.html#about">Studio</a>
+    <a href="index.html#contact">Contact</a>
+  </nav>
+
+  <button class="nav__burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu-overlay">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- ============ MENU (plein écran) ============ -->
+<div class="menu-overlay" id="menu-overlay" aria-hidden="true">
+  <button class="menu-overlay__close" type="button" aria-label="Close menu">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M2 2l16 16M18 2 2 18" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+  </button>
+
+  <a class="menu-overlay__logo" href="index.html" aria-label="Back to home">
+    <img src="assets/img/logo-mark.svg" alt="Cold Production" />
+  </a>
+
+  <nav class="menu-overlay__nav" aria-label="Work categories">
+    <a class="menu-overlay__item" href="certifications.html">
+      <span class="menu-overlay__item-title">Certifications</span>
+      <span class="menu-overlay__item-sub">Reward design</span>
+      <span class="menu-overlay__item-line" aria-hidden="true"></span>
+    </a>
+    <a class="menu-overlay__item" href="music.html">
+      <span class="menu-overlay__item-title">Music</span>
+      <span class="menu-overlay__item-sub">Artistic direction</span>
+      <span class="menu-overlay__item-line" aria-hidden="true"></span>
+    </a>
+    <a class="menu-overlay__item" href="media.html">
+      <span class="menu-overlay__item-title">Media</span>
+      <span class="menu-overlay__item-sub">Visual identity</span>
+      <span class="menu-overlay__item-line" aria-hidden="true"></span>
+    </a>
+    <a class="menu-overlay__item" href="brand-design.html">
+      <span class="menu-overlay__item-title">Brand design</span>
+      <span class="menu-overlay__item-sub">Identity &amp; branding</span>
+      <span class="menu-overlay__item-line" aria-hidden="true"></span>
+    </a>
+  </nav>
+
+  <a class="menu-overlay__insta" href="https://www.instagram.com/cxld_prod/" target="_blank" rel="noopener noreferrer" aria-label="Cold Production on Instagram">
+    <svg viewBox="0 0 499.13 499.09" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor">
+      <path d="M319.45,499.05l-141.53.04-44.75-2.09c-20.32-.95-39.47-6.29-57.87-15.31-24.49-12.01-44.41-31.54-56.87-55.86-9.79-19.1-14.59-39.41-16.36-60.66C.81,350.04,0,335.83,0,320.43v-141.76c0-15.67.81-30.15,2.14-45.54,1.78-20.74,6.48-40.52,15.92-59.21,12.08-23.94,31.36-43.31,55.21-55.57,18.86-9.69,38.88-14.45,59.89-16.24C148.35.81,162.69.04,178.08.04L321.37,0c15.34,0,29.54.82,44.63,2.11,21,1.8,41.06,6.49,59.91,16.21,23.83,12.28,43.1,31.68,55.19,55.6,9.44,18.69,14.93,38.43,15.92,59.21l2.12,44.63v143.58s-2.12,44.63-2.12,44.63c-1.02,21.52-6.85,41.98-16.98,61.17-12.27,23.26-31.38,42.03-54.83,53.92-18.92,9.59-38.98,15.09-60.01,16l-45.74,1.98ZM318.62,454.08l41.87-1.81c10.92-.47,21.29-2.84,31.71-6.17,24.5-7.82,43.73-26.11,52.59-50.24,4.22-11.49,7.02-23.04,7.56-35.31l1.81-41.12v-139.75s-1.87-42.03-1.87-42.03c-.49-10.87-3.01-21.13-6.41-31.47-8.38-25.5-28.12-44.99-53.66-53.19-12.39-3.98-24.6-6.34-37.69-6.7l-56.03-1.56-117.88.21c-14.44.03-27.82.81-42.04,1.83-55.45,3.99-87.88,36.41-91.74,91.88-.99,14.3-1.81,27.78-1.81,42.24v137.33c0,14.76.81,28.54,1.89,43.1,2.78,37.4,19.81,69.68,55.64,83.17,11.71,4.41,23.57,7.25,36.1,7.77l43.41,1.79,136.54.02Z"/>
+      <path d="M234.57,122.06c71.07-8.37,134.34,42.81,142.52,112.45,8.28,70.49-42.23,134.28-112.65,142.49-70.02,8.16-133.61-41.75-142.24-111.78-8.61-69.88,41.07-134.77,112.37-143.16ZM238.56,167.06c-46.56,6.23-77.87,49.16-71.41,94.3s48.28,76.76,93.43,70.72c45.44-6.08,77.64-48.02,71.51-93.57s-47.26-77.66-93.54-71.46Z"/>
+      <path d="M375.61,87.1c16.73-4.23,32.68,5.98,36.57,22.07s-5.88,32.5-22.84,36.25c-14.98,3.31-31.12-5.62-35.31-21.65s4.54-32.35,21.59-36.66Z"/>
+    </svg>
+  </a>
+</div>
+
+<div class="frame">
+
+<!-- Grain / bruit superposé sur tout le site -->
+<div class="grain" aria-hidden="true"></div>
+
+<!-- Lueurs dynamiques sur tout le fond — même calque que sur la page
+     d'accueil, voir index.html pour le détail des commentaires. -->
+<div class="bg-glow" aria-hidden="true">
+  <span class="bg-glow__layer bg-glow__layer--a"></span>
+  <span class="bg-glow__layer bg-glow__layer--b"></span>
+  <span class="bg-glow__layer bg-glow__layer--c"></span>
+</div>
+
+<!-- ============ PROJECT HERO ============ -->
+<section class="case-hero">
+  <a class="case-hero__back" href="music.html">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>Music</span>
+  </a>
+  <p class="case-hero__eyebrow"></p>Cover design &amp; custom typography</p>
+  <h1 class="case-hero__title">
+    <img class="case-hero__logo" src="assets/img/logos/glk.svg" alt="GLK" />
+  </h1>
+  <p class="case-hero__lead">A cover built for GLK a name that no longer needs an introduction in French rap. Beyond the desert scene staged on the artwork, the real heart of this project is a custom wordmark drawn entirely from scratch: a single piece of typography designed to carry the release on its own, across every format and every platform.</p>
+  <ul class="case-hero__meta">
+    <li><span>Client</span>GLK</li>
+    <li><span>Mission</span>Cover design &amp; typography</li>
+    <li><span>Delivered</span>July 2026</li>
+  </ul>
+</section>
+
+<!-- ============ 1. INTRO — L'ARTISTE ET LA CONFIANCE ACCORDÉE ============ -->
+<section class="case-section">
+  <h2 class="case-section__title">A confirmed artist, a defining opportunity</h2>
+  <p class="case-section__text">GLK is a key figure in the French rap scene: his discography and career speak for themselves. Being asked to design the cover art for one of his singles isn’t just any commission, it’s the kind of project that sets the bar very high and demands a result worthy of an artist who has nothing left to prove.</p>
+  <p class="case-section__text">This project wouldn't have happened without the trust of <strong>AKM</strong> and <strong>Sommet Création</strong>, who opened the door to working directly on a release of this scale. A huge thank you to both for the opportunity, and for the confidence to let this vision run all the way through.</p>
+</section>
+
+<!-- ============ 2. LA COVER ============ -->
+<figure class="case-figure">
+  <img src="assets/img/work/multi-glk/1-cover.png" alt="MULTI cover — GLK, a G-Wagon cutting through desert dust" loading="lazy" />
+  <figcaption class="case-figure__caption">The final cover with a Mercedes G-Wagon tearing through the dust, staged as the visual backbone of the release.</figcaption>
+</figure>
+
+<!-- ============ 3. LA DIRECTION ARTISTIQUE DE LA SCÈNE ============ -->
+<section class="case-section">
+  <h2 class="case-section__title">Building the scene before building the type</h2>
+  <p class="case-section__text">Before any typography could work, the image needed to carry the right weight on its own. The composition was built in <strong>Photoshop</strong>: a raw desert setting, a warm sun-bleached color grade, and a cloud of dust kicked up behind the vehicle to inject motion and tension into a still frame. Every layer of dust, grain, light falloff was worked by hand until the scene felt shot, not composited.</p>
+  <p class="case-section__text">That desert palette wasn't a random choice: it sets the tone for the whole release and becomes the color language the typography then has to sit inside, rather than fight against.</p>
+</section>
+
+<!-- ============ 4. LE WORDMARK EN CONTEXTE ============ -->
+<figure class="case-figure">
+  <img src="assets/img/work/multi-glk/2-pattern.png" alt="The custom MULTI wordmark repeated across a textured background" loading="lazy" />
+  <figcaption class="case-figure__caption">The custom-drawn "multi" wordmark, repeated to show its rhythm and consistency at any scale.</figcaption>
+</figure>
+
+<!-- ============ 5. LE TRAVAIL TYPOGRAPHIQUE — LE VRAI CŒUR DU PROJET ============ -->
+<section class="case-section">
+  <h2 class="case-section__title">A custom logotype, drawn from zero</h2>
+  <p class="case-section__text">This is where the real work lives. The "multi" wordmark was constructed letter by letter in <strong>Illustrator</strong>, on a strict grid, with every curve, counter and junction redrawn by hand until the whole word reads as a single, deliberate shape rather than a sequence of separate letters.</p>
+  <p class="case-section__text">Every angle had to stay consistent, every counter had to breathe the same way, and the whole construction had to hold up whether it's stamped small in a corner of a Story or blown up full-screen on a cover. That level of precision is, honestly, where the vast majority of the hours on this project went far more than the photo composition itself. The image sets the mood; the type is what makes the release recognizable in a single glance, on any platform, at any size.</p>
+</section>
+
+<!-- ============ 6. LA GRILLE DE CONSTRUCTION ============ -->
+<figure class="case-figure">
+  <img src="assets/img/work/multi-glk/3-construction.jpg" alt="MULTI wordmark construction grid, alignment guides and geometric markers" loading="lazy" />
+  <figcaption class="case-figure__caption">Construction grid, alignment guides, angle markers and the geometric logic behind every letter.</figcaption>
+</figure>
+
+<!-- ============ 7. CONCLUSION SUR LA TYPO ============ -->
+<section class="case-section">
+  <h2 class="case-section__title">Typography as the real deliverable</h2>
+  <p class="case-section__text">A cover gets seen once, scrolled past, replaced by the next release. A wordmark like this one is built to outlast the scroll, it's the piece that travels across the single's artwork, its promotional content, and every platform it lands on, always instantly identifiable as "MULTI". That's the whole point of treating typography as a design discipline in its own right, not an afterthought stamped on top of a finished image.</p>
+</section>
+
+<!-- ============ 8. RÉSULTAT SUR LES PLATEFORMES ============ -->
+<figure class="case-figure">
+  <img src="assets/img/work/multi-glk/4-streaming.png" alt="MULTI by GLK, live on streaming platforms" loading="lazy" />
+  <figcaption class="case-figure__caption">MULTI, live on streaming platforms — GLK, single, released July 2026.</figcaption>
+</figure>
+
+<!-- ============ CHIFFRES CLÉS ============ -->
+<div class="case-meta-strip">
+  <div><span>Client</span><strong>GLK</strong></div>
+  <div><span>Streams</span><strong>66,000+</strong></div>
+  <div><span>Release</span><strong>July 22, 2026</strong></div>
+  <div><span>Tools</span><strong>Photoshop &amp; Illustrator</strong></div>
+</div>
+
+<!-- ============ CODE COULEUR ============ -->
+<section class="case-section">
+  <h2 class="case-section__title">The cover's color code</h2>
+  <p class="case-section__text">Four tones pulled directly from the artwork, the desert palette that anchors the whole release and the backdrop the "multi" wordmark was built to sit on top of.</p>
+</section>
+
+<div class="case-colors">
+  <div class="case-colors__grid">
+    <div>
+      <div class="case-colors__swatch" style="background:#E7C088;"></div>
+      <div class="case-colors__label">
+        <span class="case-colors__name">Desert sand</span>
+        <span class="case-colors__hex">#E7C088</span>
+      </div>
+    </div>
+    <div>
+      <div class="case-colors__swatch" style="background:#C97A3D;"></div>
+      <div class="case-colors__label">
+        <span class="case-colors__name">Amber dust</span>
+        <span class="case-colors__hex">#C97A3D</span>
+      </div>
+    </div>
+    <div>
+      <div class="case-colors__swatch" style="background:#1E1712;"></div>
+      <div class="case-colors__label">
+        <span class="case-colors__name">G-Wagon black</span>
+        <span class="case-colors__hex">#1E1712</span>
+      </div>
+    </div>
+    <div>
+      <div class="case-colors__swatch" style="background:#F4EAD9;"></div>
+      <div class="case-colors__label">
+        <span class="case-colors__name">Sunbleached white</span>
+        <span class="case-colors__hex">#F4EAD9</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <span>© <span id="year"></span> COLD PRODUCTION</span>
+  <a class="footer__insta" href="https://www.instagram.com/cxld_prod/" target="_blank" rel="noopener noreferrer" aria-label="Cold Production on Instagram">
+    <svg viewBox="0 0 499.13 499.09" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor">
+      <path d="M319.45,499.05l-141.53.04-44.75-2.09c-20.32-.95-39.47-6.29-57.87-15.31-24.49-12.01-44.41-31.54-56.87-55.86-9.79-19.1-14.59-39.41-16.36-60.66C.81,350.04,0,335.83,0,320.43v-141.76c0-15.67.81-30.15,2.14-45.54,1.78-20.74,6.48-40.52,15.92-59.21,12.08-23.94,31.36-43.31,55.21-55.57,18.86-9.69,38.88-14.45,59.89-16.24C148.35.81,162.69.04,178.08.04L321.37,0c15.34,0,29.54.82,44.63,2.11,21,1.8,41.06,6.49,59.91,16.21,23.83,12.28,43.1,31.68,55.19,55.6,9.44,18.69,14.93,38.43,15.92,59.21l2.12,44.63v143.58s-2.12,44.63-2.12,44.63c-1.02,21.52-6.85,41.98-16.98,61.17-12.27,23.26-31.38,42.03-54.83,53.92-18.92,9.59-38.98,15.09-60.01,16l-45.74,1.98ZM318.62,454.08l41.87-1.81c10.92-.47,21.29-2.84,31.71-6.17,24.5-7.82,43.73-26.11,52.59-50.24,4.22-11.49,7.02-23.04,7.56-35.31l1.81-41.12v-139.75s-1.87-42.03-1.87-42.03c-.49-10.87-3.01-21.13-6.41-31.47-8.38-25.5-28.12-44.99-53.66-53.19-12.39-3.98-24.6-6.34-37.69-6.7l-56.03-1.56-117.88.21c-14.44.03-27.82.81-42.04,1.83-55.45,3.99-87.88,36.41-91.74,91.88-.99,14.3-1.81,27.78-1.81,42.24v137.33c0,14.76.81,28.54,1.89,43.1,2.78,37.4,19.81,69.68,55.64,83.17,11.71,4.41,23.57,7.25,36.1,7.77l43.41,1.79,136.54.02Z"/>
+      <path d="M234.57,122.06c71.07-8.37,134.34,42.81,142.52,112.45,8.28,70.49-42.23,134.28-112.65,142.49-70.02,8.16-133.61-41.75-142.24-111.78-8.61-69.88,41.07-134.77,112.37-143.16ZM238.56,167.06c-46.56,6.23-77.87,49.16-71.41,94.3s48.28,76.76,93.43,70.72c45.44-6.08,77.64-48.02,71.51-93.57s-47.26-77.66-93.54-71.46Z"/>
+      <path d="M375.61,87.1c16.73-4.23,32.68,5.98,36.57,22.07s-5.88,32.5-22.84,36.25c-14.98,3.31-31.12-5.62-35.31-21.65s4.54-32.35,21.59-36.66Z"/>
+    </svg>
+  </a>
+</footer>
+
+</div><!-- /.frame -->
+
+<!-- En dehors de .frame pour la même raison que le nav : .frame a un
+     `transform` qui casse `position: fixed` sur ses descendants. -->
+<button class="back-to-top" type="button" aria-label="Back to top">
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 13V3M3 7l5-5 5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+
+<script type="module" src="main.js"></script>
+</body>
+</html>

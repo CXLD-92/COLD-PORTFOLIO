@@ -1021,6 +1021,17 @@ textarea:focus-visible {
 .work-card:nth-child(4) { z-index: 4; }
 .work-card:nth-child(5) { z-index: 5; }
 
+/* Lien cliquable pour les cards "Work" qui pointent vers une étude de
+   cas (ex: 120%RAP) : recouvre toute la card, et passe au-dessus du
+   dégradé ::after (z-index: 1) pour rester cliquable sur toute sa
+   surface. Purement transparent, aucun changement visuel. */
+.work-card__link {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+}
+
 .work-card__media {
   position: absolute;
   inset: 0;
@@ -1639,6 +1650,20 @@ textarea:focus-visible {
   margin: 0 0 10px;
 }
 .case-hero__title { margin: 0; }
+/* Variante texte : certains projets (single cover, pas de logo client
+   isolé livré séparément) n'ont pas de fichier logo propre à afficher
+   ici — contrairement à .case-hero__logo (image), cette variante
+   compose le titre directement dans la police serif du site. */
+.case-hero__title-text {
+  display: block;
+  font-family: var(--font-serif); /* Pressio */
+  font-weight: 400;
+  font-size: clamp(52px, 11vw, 116px);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  margin: 0 auto;
+  color: var(--ink);
+}
 /* Le titre affiche le vrai logo du client plutôt que le nom composé
    en Edition : plus honnête vis-à-vis du travail (c'est LE logotype
    livré), et évite toute divergence entre le rendu du wordmark et la
@@ -1756,6 +1781,11 @@ textarea:focus-visible {
    le bouton de retour (retirés), il faut recréer cet espace de
    respiration ici pour ne pas coller le footer au texte. */
 .case-section:last-of-type { padding-bottom: clamp(56px, 10vw, 96px); }
+/* Exception : si un bloc couleur suit (voir .case-colors plus bas), ce
+   n'est plus vraiment le dernier bloc avant le footer — sans ce reset,
+   le padding ci-dessus s'additionnerait à celui de .case-colors et
+   créerait un vide bien trop grand entre le texte et les carrés. */
+.case-section:has(+ .case-colors) { padding-bottom: 0; }
 
 /* ---- Galerie (déclinaisons par thématique, si utilisée groupée) ---- */
 .case-gallery {
@@ -1802,6 +1832,56 @@ textarea:focus-visible {
   display: flex;
   justify-content: center;
   padding: clamp(40px, 7vw, 56px) var(--gutter) clamp(56px, 10vw, 88px);
+}
+
+/* ---- Palette / code couleur (4 carrés égaux) ---- */
+/* Même logique que .case-figure (radius, ombre portée) appliquée à des
+   aplats de couleur plutôt qu'à des images — pour que la palette d'un
+   visuel se lise comme une extension naturelle de la galerie, pas
+   comme un bloc d'interface différent. */
+.case-colors {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--gutter) clamp(56px, 10vw, 96px);
+}
+.case-colors__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(14px, 2.4vw, 24px);
+}
+.case-colors__swatch {
+  aspect-ratio: 1 / 1;
+  border-radius: 6px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
+}
+.case-colors__label {
+  margin-top: 12px;
+  text-align: center;
+}
+.case-colors__name {
+  display: block;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.3;
+  /* Réserve toujours la hauteur de 2 lignes, même quand le nom tient
+     sur une seule — sans ça, un nom plus long qu'un autre (ex.
+     "Sunbleached white" vs "Amber dust") passe sur 2 lignes dans sa
+     colonne étroite et décale son #hex plus bas que les 3 autres. */
+  min-height: 2.6em;
+  color: var(--ink);
+}
+.case-colors__hex {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+@media (max-width: 560px) {
+  .case-colors__grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* ---- Bouton "retour en haut" ---- */
