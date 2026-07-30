@@ -1737,6 +1737,14 @@ textarea:focus-visible {
   border-radius: 6px;
   box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
 }
+.case-figure video {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
+  background: #000;
+}
 .case-figure__caption {
   margin: 14px auto 0;
   max-width: 640px;
@@ -1855,25 +1863,26 @@ textarea:focus-visible {
   box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
 }
 .case-colors__label {
-  margin-top: 12px;
+  margin-top: 20px;
   text-align: center;
 }
+/* La règle générale de rythme vertical entre gros blocs
+   ([class^="case-"] + [class^="case-"], plus haut dans ce fichier) a
+   une spécificité plus forte qu'un simple sélecteur de classe — sans
+   ce correctif ciblé (même spécificité, mais déclaré après), elle
+   prenait le dessus et imposait son propre espacement ici. */
+.case-colors__swatch + .case-colors__label { margin-top: 20px; }
 .case-colors__name {
   display: block;
   font-family: var(--font-ui);
   font-weight: 500;
   font-size: 13px;
   line-height: 1.3;
-  /* Réserve toujours la hauteur de 2 lignes, même quand le nom tient
-     sur une seule — sans ça, un nom plus long qu'un autre (ex.
-     "Sunbleached white" vs "Amber dust") passe sur 2 lignes dans sa
-     colonne étroite et décale son #hex plus bas que les 3 autres. */
-  min-height: 2.6em;
   color: var(--ink);
 }
 .case-colors__hex {
   display: block;
-  margin-top: 3px;
+  margin-top: 2px;
   font-family: var(--font-ui);
   font-size: 11px;
   letter-spacing: 0.1em;
