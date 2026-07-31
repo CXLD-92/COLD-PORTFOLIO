@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>La Fouine — Certifications | Cold Production</title>
+<meta name="description" content="Kylian B. — Gold record and single certification design across 3 of La Fouine's music projects." />
+
+<meta name="color-scheme" content="only light" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<!-- En dehors de .frame volontairement : .frame a un `transform` (pour
+     l'accélération GPU du rendu 3D), qui casse `position: fixed` sur ses
+     descendants — un nav fixed à l'intérieur scrollerait avec le reste
+     du contenu au lieu de rester épinglé à l'écran. -->
+<header class="nav is-scrolled">
+  <div class="nav__lang" role="group" aria-label="Langue">
+    <button class="nav__lang-btn" type="button" data-lang="fr" aria-pressed="false">FR</button>
+    <button class="nav__lang-btn is-active" type="button" data-lang="en" aria-pressed="true">EN</button>
+  </div>
+
+  <a class="nav__logo" href="index.html" aria-label="Back to top">
+    <img src="assets/img/logo-mark.svg" alt="Cold Production" />
+  </a>
+
+  <nav class="nav__links" aria-label="Navigation principale">
+    <a href="index.html#work">Work</a>
+    <a href="index.html#about">Studio</a>
+    <a href="index.html#contact">Contact</a>
+  </nav>
+
+  <button class="nav__burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu-overlay">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- ============ MENU (plein écran) ============ -->
+<div class="menu-overlay" id="menu-overlay" aria-hidden="true">
+  <button class="menu-overlay__close" type="button" aria-label="Close menu">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M2 2l16 16M18 2 2 18" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+  </button>
+
+  <a class="menu-overlay__logo" href="index.html" aria-label="Back to home">
+    <img src="assets/img/logo-mark.svg" alt="Cold Production" />
+  </a>
+
+  <nav class="menu-overlay__nav" aria-label="Work categories">
+    <a class="menu-overlay__item" href="certifications.html">
+      <span class="menu-overlay__item-title">Certifications</span>
+      <span class="menu-overlay__item-sub">Reward design</span>
+      <span class="menu-overlay__item-line" aria-hidden="true"></span>
+    </a>
+    <a class="menu-overlay__item" href="music.html">
+      <span class="menu-overlay__item-title">Music</span>
+      <span class="menu-overlay__item-sub">Artistic direction</span>
+      <span class="menu-overlay__item-line" aria-hidden="true"></span>
+    </a>
+    <a class="menu-overlay__item" href="media.html">
+      <span class="menu-overlay__item-title">Media</span>
+      <span class="menu-overlay__item-sub">Visual identity</span>
+      <span class="menu-overlay__item-line" aria-hidden="true"></span>
+    </a>
+    <a class="menu-overlay__item" href="brand-design.html">
+      <span class="menu-overlay__item-title">Brand design</span>
+      <span class="menu-overlay__item-sub">Identity &amp; branding</span>
+      <span class="menu-overlay__item-line" aria-hidden="true"></span>
+    </a>
+  </nav>
+
+  <a class="menu-overlay__insta" href="https://www.instagram.com/cxld_prod/" target="_blank" rel="noopener noreferrer" aria-label="Cold Production on Instagram">
+    <svg viewBox="0 0 499.13 499.09" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor">
+      <path d="M319.45,499.05l-141.53.04-44.75-2.09c-20.32-.95-39.47-6.29-57.87-15.31-24.49-12.01-44.41-31.54-56.87-55.86-9.79-19.1-14.59-39.41-16.36-60.66C.81,350.04,0,335.83,0,320.43v-141.76c0-15.67.81-30.15,2.14-45.54,1.78-20.74,6.48-40.52,15.92-59.21,12.08-23.94,31.36-43.31,55.21-55.57,18.86-9.69,38.88-14.45,59.89-16.24C148.35.81,162.69.04,178.08.04L321.37,0c15.34,0,29.54.82,44.63,2.11,21,1.8,41.06,6.49,59.91,16.21,23.83,12.28,43.1,31.68,55.19,55.6,9.44,18.69,14.93,38.43,15.92,59.21l2.12,44.63v143.58s-2.12,44.63-2.12,44.63c-1.02,21.52-6.85,41.98-16.98,61.17-12.27,23.26-31.38,42.03-54.83,53.92-18.92,9.59-38.98,15.09-60.01,16l-45.74,1.98ZM318.62,454.08l41.87-1.81c10.92-.47,21.29-2.84,31.71-6.17,24.5-7.82,43.73-26.11,52.59-50.24,4.22-11.49,7.02-23.04,7.56-35.31l1.81-41.12v-139.75s-1.87-42.03-1.87-42.03c-.49-10.87-3.01-21.13-6.41-31.47-8.38-25.5-28.12-44.99-53.66-53.19-12.39-3.98-24.6-6.34-37.69-6.7l-56.03-1.56-117.88.21c-14.44.03-27.82.81-42.04,1.83-55.45,3.99-87.88,36.41-91.74,91.88-.99,14.3-1.81,27.78-1.81,42.24v137.33c0,14.76.81,28.54,1.89,43.1,2.78,37.4,19.81,69.68,55.64,83.17,11.71,4.41,23.57,7.25,36.1,7.77l43.41,1.79,136.54.02Z"/>
+      <path d="M234.57,122.06c71.07-8.37,134.34,42.81,142.52,112.45,8.28,70.49-42.23,134.28-112.65,142.49-70.02,8.16-133.61-41.75-142.24-111.78-8.61-69.88,41.07-134.77,112.37-143.16ZM238.56,167.06c-46.56,6.23-77.87,49.16-71.41,94.3s48.28,76.76,93.43,70.72c45.44-6.08,77.64-48.02,71.51-93.57s-47.26-77.66-93.54-71.46Z"/>
+      <path d="M375.61,87.1c16.73-4.23,32.68,5.98,36.57,22.07s-5.88,32.5-22.84,36.25c-14.98,3.31-31.12-5.62-35.31-21.65s4.54-32.35,21.59-36.66Z"/>
+    </svg>
+  </a>
+</div>
+
+<div class="frame">
+
+<!-- Grain / bruit superposé sur tout le site -->
+<div class="grain" aria-hidden="true"></div>
+
+<!-- Lueurs dynamiques sur tout le fond — même calque que sur la page
+     d'accueil, voir index.html pour le détail des commentaires. -->
+<div class="bg-glow" aria-hidden="true">
+  <span class="bg-glow__layer bg-glow__layer--a"></span>
+  <span class="bg-glow__layer bg-glow__layer--b"></span>
+  <span class="bg-glow__layer bg-glow__layer--c"></span>
+</div>
+
+<!-- ============ PROJECT HERO ============ -->
+<section class="case-hero">
+  <a class="case-hero__back" href="certifications.html">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>Certifications</span>
+  </a>
+  <p class="case-hero__eyebrow">Certifications — Gold record &amp; single artwork design</p>
+  <h1 class="case-hero__title">
+    <img class="case-hero__logo" src="assets/img/logos/lafouine.svg" alt="La Fouine" />
+  </h1>
+  <p class="case-hero__lead">The biggest project to date — certification and single artwork across three of La Fouine's music projects, produced for one of French rap's most established names and everyone who stood alongside him on these records.</p>
+  <ul class="case-hero__meta">
+    <li><span>Client</span>La Fouine</li>
+    <li><span>Mission</span>Certification &amp; single artwork</li>
+    <li><span>Projects</span>3</li>
+    <li><span>Delivered</span>January 2026</li>
+  </ul>
+</section>
+
+<!-- ============ 1. INTRO — L'AMPLEUR DU PROJET ============ -->
+<section class="case-section">
+  <h2 class="case-section__title">The biggest project to date</h2>
+  <p class="case-section__text">This is, by scale alone, the largest project this studio has taken on. Across three of La Fouine's music projects, the brief covered every single artwork and every gold record certification tied to those releases — a volume of work that meant constant back and forth, tight deadlines, and a level of coordination this studio hadn't been asked for before.</p>
+  <p class="case-section__text">None of it happens without the trust of <strong>La Fouine's management</strong> and <strong>Sommet Création</strong>, who brought this project in and let it run at the scale it needed. A huge thank you to both — for the opportunity, and for the confidence over months of production.</p>
+</section>
+
+<!-- ============ 2. PHOTO — PRÉSENTATION LIVE ============ -->
+<figure class="case-figure">
+  <img src="assets/img/work/la-fouine-certifications/1-presentation.png" alt="La Fouine presenting a gold certification plaque on stage" loading="lazy" />
+  <figcaption class="case-figure__caption">One of the certification plaques, handed over live in front of the team behind the project.</figcaption>
+</figure>
+
+<!-- ============ 3. TOUT LE MONDE EST HONORÉ ============ -->
+<section class="case-section">
+  <h2 class="case-section__title">One headline artist, an entire cast honored</h2>
+  <p class="case-section__text">La Fouine fronts these releases, but he was never the only name on the wall. Every artist who featured on one of these three projects received their own personalized frame — among them <strong>Ninho</strong>, <strong>Sofiane</strong>, <strong>L2B</strong>, <strong>Himra</strong>, and several others. Beyond the featured artists, plaques were also produced for the producers, sound engineers, composers and artistic directors who worked on the records — everyone who put their hands on the project got to hold a piece of what it became.</p>
+</section>
+
+<!-- ============ 4. L'AMPLEUR — GROSSE COMMANDE ============ -->
+<figure class="case-figure">
+  <img src="assets/img/work/la-fouine-certifications/3-release-party.png" alt="Dozens of gold certification plaques laid out at a release party" loading="lazy" />
+  <figcaption class="case-figure__caption">Part of one single batch — dozens of plaques produced for one release party alone.</figcaption>
+</figure>
+
+<figure class="case-figure">
+  <img src="assets/img/work/la-fouine-certifications/2-zenith-crowd.jpg" alt="A certification plaque held up on stage at the Zénith de Paris" loading="lazy" />
+  <figcaption class="case-figure__caption">Live at the Zénith de Paris — a certification handed over on stage, in front of thousands.</figcaption>
+</figure>
+
+<figure class="case-figure">
+  <img src="assets/img/work/la-fouine-certifications/4-himra-zenith.jpg" alt="Himra holding his gold certification plaque on stage at the Zénith de Paris" loading="lazy" />
+  <figcaption class="case-figure__caption">Himra, holding his own certification on the same Zénith stage.</figcaption>
+</figure>
+
+<!-- ============ 5. DE LA MAQUETTE À LA PLAQUE ============ -->
+<section class="case-section">
+  <h2 class="case-section__title">From mockup to plaque</h2>
+  <p class="case-section__text">Every certification started as a full artwork mockup — built and refined until it was ready to validate with the teams before going to physical production. Each one meant the same discipline as a cover: typography set and adjusted by hand, logos placed and resized to sit cleanly against the record, layout balanced so the certification text never fought with the artwork behind it. At this scale, consistency mattered as much as any single design — every plaque had to feel unmistakably part of the same family, whichever project or artist it belonged to.</p>
+</section>
+
+<figure class="case-figure">
+  <img src="assets/img/work/la-fouine-certifications/5-mockup-etat-des-lieux.png" alt="Certification mockup for 'État des lieux' by La Fouine feat. Ninho, awarded to Ninho" loading="lazy" />
+  <figcaption class="case-figure__caption">Mockup — "État des lieux," La Fouine feat. Ninho, certification awarded to Ninho.</figcaption>
+</figure>
+
+<figure class="case-figure">
+  <img src="assets/img/work/la-fouine-certifications/6-mockup-flying-blue.png" alt="Certification mockup for 'Flying Blue' by La Fouine, awarded to L2B" loading="lazy" />
+  <figcaption class="case-figure__caption">Mockup — "Flying Blue," La Fouine, certification awarded to L2B.</figcaption>
+</figure>
+
+<figure class="case-figure">
+  <img src="assets/img/work/la-fouine-certifications/7-mockup-cdc2.png" alt="Certification mockup for Capitale du Crime Radio, awarded to La Fouine" loading="lazy" />
+  <figcaption class="case-figure__caption">Mockup — "Capitale du Crime Radio," gold record awarded to La Fouine.</figcaption>
+</figure>
+
+<!-- ============ 6. VIDÉO BONUS ============ -->
+<figure class="case-figure">
+  <video src="assets/img/work/la-fouine-certifications/8-kizomba-clip.mp4" controls playsinline preload="metadata" aria-label="Extract from the Kizomba video clip featuring R2"></video>
+  <figcaption class="case-figure__caption">Extract from "Kizomba," featuring R2 — one of the many singles covered across this campaign.</figcaption>
+</figure>
+
+<div class="case-meta-strip">
+  <div><span>Client</span><strong>La Fouine</strong></div>
+  <div><span>Projects</span><strong>3</strong></div>
+  <div><span>Featured artists</span><strong>Ninho, Sofiane, L2B, Himra +</strong></div>
+  <div><span>Certified</span><strong>SNEP — Jan. 2026</strong></div>
+</div>
+
+<footer class="footer">
+  <span>© <span id="year"></span> COLD PRODUCTION</span>
+  <a class="footer__insta" href="https://www.instagram.com/cxld_prod/" target="_blank" rel="noopener noreferrer" aria-label="Cold Production on Instagram">
+    <svg viewBox="0 0 499.13 499.09" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor">
+      <path d="M319.45,499.05l-141.53.04-44.75-2.09c-20.32-.95-39.47-6.29-57.87-15.31-24.49-12.01-44.41-31.54-56.87-55.86-9.79-19.1-14.59-39.41-16.36-60.66C.81,350.04,0,335.83,0,320.43v-141.76c0-15.67.81-30.15,2.14-45.54,1.78-20.74,6.48-40.52,15.92-59.21,12.08-23.94,31.36-43.31,55.21-55.57,18.86-9.69,38.88-14.45,59.89-16.24C148.35.81,162.69.04,178.08.04L321.37,0c15.34,0,29.54.82,44.63,2.11,21,1.8,41.06,6.49,59.91,16.21,23.83,12.28,43.1,31.68,55.19,55.6,9.44,18.69,14.93,38.43,15.92,59.21l2.12,44.63v143.58s-2.12,44.63-2.12,44.63c-1.02,21.52-6.85,41.98-16.98,61.17-12.27,23.26-31.38,42.03-54.83,53.92-18.92,9.59-38.98,15.09-60.01,16l-45.74,1.98ZM318.62,454.08l41.87-1.81c10.92-.47,21.29-2.84,31.71-6.17,24.5-7.82,43.73-26.11,52.59-50.24,4.22-11.49,7.02-23.04,7.56-35.31l1.81-41.12v-139.75s-1.87-42.03-1.87-42.03c-.49-10.87-3.01-21.13-6.41-31.47-8.38-25.5-28.12-44.99-53.66-53.19-12.39-3.98-24.6-6.34-37.69-6.7l-56.03-1.56-117.88.21c-14.44.03-27.82.81-42.04,1.83-55.45,3.99-87.88,36.41-91.74,91.88-.99,14.3-1.81,27.78-1.81,42.24v137.33c0,14.76.81,28.54,1.89,43.1,2.78,37.4,19.81,69.68,55.64,83.17,11.71,4.41,23.57,7.25,36.1,7.77l43.41,1.79,136.54.02Z"/>
+      <path d="M234.57,122.06c71.07-8.37,134.34,42.81,142.52,112.45,8.28,70.49-42.23,134.28-112.65,142.49-70.02,8.16-133.61-41.75-142.24-111.78-8.61-69.88,41.07-134.77,112.37-143.16ZM238.56,167.06c-46.56,6.23-77.87,49.16-71.41,94.3s48.28,76.76,93.43,70.72c45.44-6.08,77.64-48.02,71.51-93.57s-47.26-77.66-93.54-71.46Z"/>
+      <path d="M375.61,87.1c16.73-4.23,32.68,5.98,36.57,22.07s-5.88,32.5-22.84,36.25c-14.98,3.31-31.12-5.62-35.31-21.65s4.54-32.35,21.59-36.66Z"/>
+    </svg>
+  </a>
+</footer>
+
+</div><!-- /.frame -->
+
+<!-- En dehors de .frame pour la même raison que le nav : .frame a un
+     `transform` qui casse `position: fixed` sur ses descendants. -->
+<button class="back-to-top" type="button" aria-label="Back to top">
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 13V3M3 7l5-5 5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+
+<script type="module" src="main.js"></script>
+</body>
+</html>
