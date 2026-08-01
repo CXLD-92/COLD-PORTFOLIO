@@ -1805,6 +1805,14 @@ textarea:focus-visible {
   padding: 0 var(--gutter);
 }
 .case-gallery .case-figure { margin: 0; padding: 0; max-width: none; }
+/* Les images sources n'ont pas toutes le même ratio (portrait foule vs
+   photo backstage plus carrée) — on force un ratio commun et un crop
+   (object-fit: cover) pour que les deux occupent exactement la même
+   taille dans la grille, quelle que soit leur image d'origine. */
+.case-gallery .case-figure img {
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+}
 @media (max-width: 720px) {
   .case-gallery { grid-template-columns: 1fr; }
 }
