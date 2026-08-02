@@ -17,7 +17,7 @@
      raccourcit d'autant le temps réel passé sur l'écran de chargement
      (perceptible surtout sur mobile / réseau lent). -->
 <link rel="preload" href="assets/fonts/edition-regular.woff2" as="font" type="font/woff2" crossorigin />
-<link rel="preload" href="assets/fonts/pressio-regular.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="assets/fonts/heading-now-medium.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="preload" href="assets/models/flame.glb" as="fetch" type="model/gltf-binary" crossorigin fetchpriority="high" />
 
 <!-- Précharge aussi les modules JS eux-mêmes (three.js + les 3 scripts
@@ -29,7 +29,7 @@
 <link rel="modulepreload" href="assets/vendor/three/three.module.min.js" />
 <link rel="modulepreload" href="preload.js" />
 <link rel="modulepreload" href="scene.js" />
-<link rel="modulepreload" href="main.js" />
+<link rel="modulepreload" href="main.js?v=6" />
 
 <!-- Import map : "three" pointe vers la copie locale, aucune dépendance CDN externe -->
 <script type="importmap">
@@ -399,6 +399,6 @@
 
 <script type="module" src="preload.js"></script>
 <script type="module" src="scene.js"></script>
-<script type="module" src="main.js"></script>
+<script type="module" src="main.js?v=6"></script>
 </body>
 </html>
