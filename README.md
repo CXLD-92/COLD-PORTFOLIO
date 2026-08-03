@@ -1,8 +1,10 @@
 # Portfolio — Kylian B. (COLD Production)
 
 Site statique (aucun backend requis) basé sur ta maquette Figma/PDF.
-Version **mobile** pour l'instant, comme demandé — le passage au
-responsive desktop se fera dans une prochaine itération.
+Responsive mobile → tablette → desktop : le cadre du site (`.frame`)
+grandit par palier avec la largeur de l'écran (voir `--frame-max` et
+la section "RESPONSIVE DESKTOP" tout en bas de `css/style.css`) au
+lieu de rester figé à une largeur mobile.
 
 ## Structure
 
@@ -145,7 +147,8 @@ ouvre sa propre page (`certifications.html`, `music.html`, `media.html`,
 - le nom de la section en grand, en police Edition, redimensionné en JS
   pour occuper toute la largeur (même mécanisme que "PORTFOLIO" en
   accueil) ;
-- 3 cartes carrées empilées, chacune un lien direct vers un travail —
+- 3 cartes carrées, chacune un lien direct vers un travail — empilées
+  sur mobile, en rangée qui s'enroule (flex-wrap) dès la tablette —
   actuellement en fond dégradé de substitution avec juste un titre
   (à remplacer par les vraies images/pages de projet une fois prêtes) ;
 - le footer.
@@ -156,7 +159,6 @@ retrouver ces 4 sections en un clic.
 
 ## Prochaines étapes possibles
 
-- Version desktop responsive (grille du "Work", nav complète, etc.)
 - Pages de détail projet (les écrans "CERTIFICATION" de la maquette)
 - Remplacer les textes Lorem ipsum et les logos "Trusted by" par le
   vrai contenu

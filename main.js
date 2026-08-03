@@ -94,6 +94,27 @@ function fitFullWidthText() {
     if (aboutSizePx) workTitle.style.fontSize = `${aboutSizePx * 0.72}px`;
   }
 
+  // Sur desktop (voir style.css → .work__head, top:100%), le bloc
+  // titre/texte/bouton n'est plus superposé aux cartes mais placé
+  // juste en dessous, en dehors du flux normal (toujours position:
+  // absolute, pour ne pas fausser le centrage vertical des flèches sur
+  // les cartes — voir le commentaire détaillé dans style.css). Comme il
+  // est hors du flux, la section .work ne réserve pas d'espace pour lui
+  // automatiquement : sans mesure réelle, une valeur fixe en CSS finit
+  // toujours par être soit trop courte (chevauchement avec la section
+  // suivante, "Trusted"), soit trop longue (vide inutile), puisque la
+  // taille de "Work" dépend elle-même de celle d'"About" (voir
+  // ci-dessus) et varie donc avec chaque largeur d'écran. On mesure
+  // donc sa hauteur réellement rendue et on la republie en variable
+  // CSS, consommée uniquement par le padding-bottom desktop de .work.
+  const workHead = document.querySelector(".work__head");
+  if (workHead) {
+    const workHeadHeight = workHead.getBoundingClientRect().height;
+    if (workHeadHeight) {
+      document.querySelector(".work")?.style.setProperty("--work-head-h", `${workHeadHeight}px`);
+    }
+  }
+
   // "Contact" occupe toute la largeur disponible dans la carte, comme
   // "PORTFOLIO" dans le hero — légère marge (scale: 0.94) pour ne pas
   // toucher les bords de la carte.
@@ -603,6 +624,61 @@ if (workCarousel) {
 
   prevArrow?.addEventListener("click", () => scrollToWorkIndex(currentWorkCenterIndex() - 1));
   nextArrow?.addEventListener("click", () => scrollToWorkIndex(currentWorkCenterIndex() + 1));
+
+  // ---- Glisser-déposer à la souris (desktop uniquement) ----
+  // Le carrousel ne se pilotait qu'au trackpad/molette ou tactile —
+  // sur desktop à la souris, rien ne permettait de le faire défiler
+  // "à la main". `pointerType === "mouse"` isole ce comportement de la
+  // souris : le tactile garde son scroll natif intact (déjà fluide),
+  // seule la souris gagne ce glisser-déposer, cohérent avec le curseur
+  // grab/grabbing posé en CSS (voir style.css → .work__carousel).
+  let workDrag = null;
+  let workDragMoved = false;
+  workCarousel.addEventListener("pointerdown", (e) => {
+    if (e.pointerType !== "mouse") return;
+    if (workScrollAnim) cancelAnimationFrame(workScrollAnim);
+    workDrag = { startX: e.clientX, scrollStart: workCarousel.scrollLeft };
+    workDragMoved = false;
+    workCarousel.setPointerCapture(e.pointerId);
+    workCarousel.style.scrollSnapType = "none";
+  });
+  workCarousel.addEventListener("pointermove", (e) => {
+    if (!workDrag || e.pointerType !== "mouse") return;
+    const dx = e.clientX - workDrag.startX;
+    if (Math.abs(dx) > 3) workDragMoved = true;
+    workCarousel.scrollLeft = workDrag.scrollStart - dx;
+  });
+  function endWorkDrag(e) {
+    if (!workDrag || e.pointerType !== "mouse") return;
+    workDrag = null;
+    workCarousel.style.scrollSnapType = "";
+    // Sans ça, réactiver le snap ci-dessus aligne instantanément sur la
+    // position déjà "accrochée" la plus proche — souvent celle de
+    // départ si le glisser n'a pas suffi à dépasser son seuil de
+    // proximité, ce qui annulait purement et simplement le glisser aux
+    // yeux de la personne. On calcule explicitement la carte la plus
+    // proche de LÀ où le glisser s'est arrêté et on y anime le scroll
+    // (même logique que les flèches), pour que le carrousel "retienne"
+    // le geste au lieu de revenir en arrière.
+    if (workDragMoved) {
+      scrollToWorkIndex(currentWorkCenterIndex());
+    }
+  }
+  workCarousel.addEventListener("pointerup", endWorkDrag);
+  workCarousel.addEventListener("pointercancel", endWorkDrag);
+  workCarousel.addEventListener("pointerleave", endWorkDrag);
+  // Évite qu'un glisser-déposer (même minime) ne déclenche aussi le
+  // lien de la carte en dessous du curseur au relâchement.
+  workCarousel.addEventListener(
+    "click",
+    (e) => {
+      if (workDragMoved) {
+        e.preventDefault();
+        workDragMoved = false;
+      }
+    },
+    { capture: true }
+  );
 }
 
 // ---------- Formulaire de contact ----------

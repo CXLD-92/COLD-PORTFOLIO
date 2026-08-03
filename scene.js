@@ -186,7 +186,19 @@ function initHeroScene(canvas) {
     // (0,0,0), donc sa position à l'écran, ne change pas.
     const margin = 1.525; // marge autour de la flamme
     const vFov = (camera.fov * Math.PI) / 180;
-    const distV = flameRadius / Math.sin(vFov / 2);
+    // `controls.target` est décalé sous l'origine (voir resize() →
+    // verticalBias), pour remonter la flamme dans le cadre — donc le
+    // point le plus haut de la sphère englobante n'est plus à
+    // `flameRadius` du point regardé, mais à `flameRadius +
+    // |target.y|` (l'écart vertical s'ajoute, dans le pire des cas).
+    // Sans ce correctif, le calcul ci-dessous ne fittait que la sphère
+    // autour de l'ORIGINE : ça suffisait tant que le cadre restait
+    // portrait (mobile, .frame plafonné à 560px de large — beaucoup de
+    // marge verticale), mais sur un cadre large et court (desktop),
+    // c'est justement l'axe vertical qui devient le plus contraint, et
+    // le sommet de la flamme dépassait le cadre côté haut.
+    const verticalRadius = flameRadius + Math.abs(controls.target.y);
+    const distV = verticalRadius / Math.sin(vFov / 2);
     const hFov = 2 * Math.atan(Math.tan(vFov / 2) * camera.aspect);
     const distH = flameRadius / Math.sin(hFov / 2);
     const distance = Math.max(distV, distH) * margin;
@@ -255,7 +267,10 @@ function initHeroScene(canvas) {
     // la caméra vise donc un peu plus bas, ce qui fait remonter la
     // flamme dans le cadre. Fixé AVANT fitCameraToFlame() pour que son
     // calcul de distance/direction soit cohérent avec ce point visé.
-    const verticalBias = flameRadius * 0.88;
+    // Sur desktop (cadre large et court, aspect > 1), ce décalage est
+    // réduit par rapport au mobile — la flamme remontait trop près du
+    // nav ; on la redescend un peu pour laisser de l'air au-dessus.
+    const verticalBias = flameRadius * (camera.aspect > 1 ? 0.65 : 0.88);
     controls.target.set(0, -verticalBias, 0);
 
     fitCameraToFlame();

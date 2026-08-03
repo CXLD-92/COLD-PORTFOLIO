@@ -69,6 +69,15 @@
   /* ---- Rythme ---- */
   --gutter: clamp(20px, 5vw, 64px);
   --section-pad: clamp(64px, 12vw, 160px);
+
+  /* ---- Largeur du cadre (.frame / .nav / .menu-overlay / .back-to-top) ----
+     Le site était conçu "mobile pour l'instant" : .frame restait bloqué à
+     560px de large même sur grand écran (voir plus bas). Cette variable
+     pilote maintenant sa largeur par palier responsive (voir les media
+     queries tout en bas de ce fichier, section "RESPONSIVE DESKTOP") —
+     un seul point de vérité, repris par .nav/.menu-overlay/.back-to-top
+     qui doivent rester alignés sur .frame. */
+  --frame-max: 560px;
 }
 
 * { box-sizing: border-box; }
@@ -156,16 +165,18 @@ html.is-loading body {
   .preloader__flame { animation: none; opacity: 1; transform: none; }
 }
 
-/* Le site est conçu mobile pour l'instant (version desktop à venir).
-   Ce cadre simule/contraint le rendu à une largeur mobile, y compris
-   sur grand écran, et sert de repère de containment pour les éléments
-   en position fixed (nav). */
+/* .frame reste le cadre de containment pour les éléments en position
+   fixed (nav, menu, back-to-top) et pour les unités cqw utilisées
+   ailleurs (titres pleine largeur). Sa largeur grandit par palier avec
+   --frame-max (voir :root et la section RESPONSIVE DESKTOP tout en bas
+   du fichier) au lieu de rester bloquée à une largeur mobile — c'est
+   ce qui rend le site responsive sur tablette/desktop. */
 .frame {
   position: relative;
   isolation: isolate;
   transform: translateZ(0);
   container-type: inline-size;
-  max-width: 560px;
+  max-width: var(--frame-max);
   margin: 0 auto;
   min-height: 100vh;
   background: var(--bg);
@@ -295,7 +306,7 @@ textarea:focus-visible {
 .nav {
   position: fixed;
   top: 0; left: 0; right: 0;
-  max-width: 560px; /* .nav est maintenant hors de .frame (position:fixed) ; on réplique sa largeur/son centrage pour qu'il reste aligné dessus */
+  max-width: var(--frame-max); /* .nav est maintenant hors de .frame (position:fixed) ; on réplique sa largeur/son centrage pour qu'il reste aligné dessus */
   margin: 0 auto;
   z-index: 100;
   display: flex;
@@ -412,7 +423,7 @@ textarea:focus-visible {
 .menu-overlay {
   position: fixed;
   inset: 0;
-  max-width: 560px; /* même largeur/centrage que .frame, maintenant qu'il est en dehors */
+  max-width: var(--frame-max); /* même largeur/centrage que .frame, maintenant qu'il est en dehors */
   margin: 0 auto;
   z-index: 100;
   background: #090a0a;
@@ -786,8 +797,7 @@ textarea:focus-visible {
   white-space: nowrap;
   padding: 0 16px;
   line-height: 1;
-}
-.marquee__dot {
+}.marquee__dot {
   color: var(--ink);
   font-size: clamp(14px, 4vw, 24px);
   line-height: 1;
@@ -1818,6 +1828,17 @@ textarea:focus-visible {
   .case-gallery { grid-template-columns: 1fr; }
 }
 
+/* ---- Desktop uniquement : images/vidéos des pages travaux réduites de
+   50% (1200px → 600px de large max) — à la demande, tout paraissait
+   trop grand sur desktop une fois le cadre élargi. Mobile/tablette
+   inchangés. ---- */
+@media (min-width: 1000px) {
+  .case-figure,
+  .case-gallery {
+    max-width: 600px;
+  }
+}
+
 /* ---- Bandeau crédits de fermeture ---- */
 .case-meta-strip {
   display: flex;
@@ -1912,16 +1933,18 @@ textarea:focus-visible {
   position: fixed;
   /* Le bouton est hors de .frame (nécessaire pour que position:fixed
      s'ancre bien au vrai viewport — voir plus haut) — mais .frame fait
-     max 560px et reste centré au-delà. Sur un écran large, un simple
-     `right: Npx` collerait donc le bouton au bord de la fenêtre au lieu
-     du bord du cadre du site. On recalcule la marge que .frame laisse
-     de chaque côté ((100vw - min(560px, 100vw)) / 2) et on y ajoute
+     max --frame-max (560px sur mobile, davantage sur tablette/desktop —
+     voir la section RESPONSIVE DESKTOP) et reste centré au-delà. Sur un
+     écran large, un simple `right: Npx` collerait donc le bouton au
+     bord de la fenêtre au lieu du bord du cadre du site. On recalcule
+     la marge que .frame laisse de chaque côté
+     ((100vw - min(var(--frame-max), 100vw)) / 2) et on y ajoute
      l'inset désiré — même bord que .nav, qui résout ce même problème
      via max-width + margin auto plutôt qu'un calc (moins pratique ici
      car .back-to-top n'a pas besoin d'être aussi large que .frame).
   */
   --edge: clamp(16px, 3vw, 28px);
-  right: calc((100vw - min(560px, 100vw)) / 2 + var(--edge));
+  right: calc((100vw - min(var(--frame-max), 100vw)) / 2 + var(--edge));
   bottom: var(--edge);
   z-index: 400;
   display: flex;
@@ -1953,4 +1976,249 @@ textarea:focus-visible {
 .back-to-top svg { display: block; }
 .back-to-top.is-docked {
   position: absolute; /* épinglé au document plutôt qu'à l'écran, une fois arrivé juste au-dessus du footer — voir main.js */
+}
+
+/* =========================================================
+   RESPONSIVE DESKTOP
+   Le site était volontairement figé à une largeur mobile (.frame
+   bloqué à 560px, voir plus haut) quelle que soit la taille réelle de
+   l'écran — cette section fait grandir progressivement --frame-max
+   (défini dans :root) par palier, et ajuste les quelques endroits qui
+   avaient été pensés exclusivement pour un cadre étroit. Le reste du
+   site (cartes, grilles, typographies en clamp()/cqw, carrousel...)
+   est déjà fluide et s'adapte tout seul à mesure que .frame s'élargit,
+   donc ne nécessite aucune règle supplémentaire ici.
+   ========================================================= */
+
+/* ---- Palier tablette : le cadre quitte sa largeur mobile fixe ---- */
+@media (min-width: 700px) {
+  :root { --frame-max: 820px; }
+
+  /* PORTFOLIO/CONTACT etc. sont dimensionnés en JS pour occuper 100%
+     de la largeur de .hero__text (voir main.js → fitTextToWidth) : sans
+     ce plafond, le titre grandirait à mesure que .frame s'élargit et
+     deviendrait démesuré sur grand écran. On fige sa largeur de
+     référence, comme le reste des titres pleine-largeur du site (déjà
+     plafonnés côté CSS via des max-width sur leur conteneur — voir
+     .about/.contact__form). */
+  .hero__text {
+    max-width: 620px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* ---- Palier desktop : "PORTFOLIO" d'abord agrandi de 25% par rapport
+   à la tablette (620px × 1.25 = 775px), puis re-réduit de 25% à la
+   demande (775px × 0.75 ≈ 581px). ---- */
+@media (min-width: 1000px) {
+  .hero__text {
+    max-width: 581px;
+  }
+}
+
+/* ---- Palier tablette large / petit desktop ---- */
+@media (min-width: 1000px) {
+  :root { --frame-max: 1180px; }
+
+  /* Les liens de nav (Work / Studio / Contact) restent masqués sur
+     mobile/tablette (le menu plein écran suffit) ; à partir d'ici il y
+     a la place de les afficher en plus du bouton menu, comme sur un
+     site desktop classique. */
+  .nav__links { display: flex; }
+}
+
+/* ---- Palier desktop : au-delà de cette largeur, le cadre suit
+   directement la largeur réelle de l'écran (voir la note ci-dessous) —
+   plus de palier intermédiaire qui laissait deux bandes noires
+   visibles entre ~1440px et ~1900px de large. ---- */
+@media (min-width: 1300px) {
+  /* --frame-max n'est qu'un PLAFOND (max-width) : tant que la fenêtre
+     est plus étroite que cette valeur, .frame occupe déjà 100% de sa
+     largeur réelle, sans aucune bande noire. La valeur ci-dessous est
+     volontairement bien plus large que n'importe quel écran réaliste
+     (l'équivalent d'un "pas de plafond"), tout en restant une longueur
+     CSS valide — nécessaire pour le calc()/min() de .back-to-top plus
+     haut, qui n'accepte pas `none`. Les sections internes plafonnent
+     déjà toutes autour de 1100-1400px (voir .about/.work/.trusted/
+     .contact), donc le contenu ne s'étire jamais au-delà d'une largeur
+     de lecture confortable même si .frame, lui, va jusqu'au bord de
+     l'écran. */
+  :root { --frame-max: 3200px; }
+}
+
+/* ---- Pages de section (Certifications / Music / Media / Brand
+   design) : les 3 cartes carrées, empilées verticalement sur mobile,
+   passent en rangée qui s'enroule (flex-wrap) dès qu'il y a la place —
+   sur les pages à une seule carte (Media, Brand design), elle est
+   simplement centrée à une taille raisonnable plutôt que d'être
+   étirée sur toute la largeur du cadre. ---- */
+@media (min-width: 640px) {
+  .section-projects {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .project-card {
+    flex: 1 1 320px;
+    max-width: 420px;
+  }
+}
+
+/* ---- Carte "Contact" : le titre "CONTACT" est dimensionné en JS pour
+   occuper 100% de la largeur de .contact__card (voir main.js →
+   fitTextToWidth) — tant que .contact (donc la carte) restait plafonné
+   à 560px de large, ça donnait un titre proportionné à "CONTACTEZ-MOI"
+   juste au-dessus. Une fois .contact élargi (via --frame-max) à
+   1400px, le titre grossit d'autant... mais pas "CONTACTEZ-MOI" (déjà
+   plafonné en CSS via clamp()), d'où le décalage de taille très
+   marqué entre les deux. On plafonne donc la carte elle-même à une
+   largeur plus modeste dès qu'il y a la place, pour que les deux
+   restent proportionnés l'un à l'autre comme sur mobile. */
+@media (min-width: 700px) {
+  .contact {
+    max-width: 900px;
+  }
+}
+
+/* ---- Desktop uniquement : "CONTACT" encore réduit de 25% par rapport
+   à la tablette (900px × 0.75 = 675px) et "CONTACTEZ-MOI !" agrandi de
+   25% (22px × 1.25 ≈ 27.5px, le clamp() plafonnait déjà à 22px sur ces
+   largeurs), à la demande — pour rééquilibrer les deux dans l'autre
+   sens. ---- */
+@media (min-width: 1000px) {
+  .contact {
+    max-width: 675px;
+  }
+  .contact__eyebrow {
+    font-size: 27.5px;
+  }
+}
+/* ---- Desktop uniquement : bandeau de services (STRATEGY · ARTISTIC
+   DIRECTION · ...) — éléments nettement plus espacés qu'en mobile pour
+   respirer sur un écran large, à la demande. ---- */
+@media (min-width: 1000px) {
+  .marquee__item {
+    padding: 0 48px;
+  }
+}
+
+/* ---- Desktop uniquement : carrousel "Work" — cartes agrandies, texte
+   déplacé SOUS les cartes (au lieu d'être superposé dessus), fondu en
+   opacité sur les bords gauche/droite (même principe que le bandeau
+   "Ils me font confiance"), et espacement entre cartes proportionné à
+   leur nouvelle taille pour un rendu plus fluide.
+
+   `.work__head` reste position:absolute (comme en mobile — inchangé)
+   mais `top:100%` au lieu de `bottom:0` : il se cale juste sous le bas
+   de `.work__carousel-wrap` plutôt que de se superposer aux cartes. En
+   restant absolute, il n'agrandit pas la boîte de `.work__carousel-wrap`
+   (les flèches, positionnées à `top:50%` de ce même conteneur, restent
+   donc parfaitement centrées sur les cartes — un `.work__head` en flux
+   normal aurait changé la hauteur totale et décentré les flèches).
+   `.work` récupère le padding-bottom nécessaire pour laisser la place
+   au texte maintenant hors du conteneur du carrousel. */
+@media (min-width: 1000px) {
+  .work__carousel {
+    --work-card-w: min(30vw, 380px);
+  }
+  .work-card {
+    /* Proportionnel au nouveau --work-card-w (même ratio que -46px sur
+       244px en mobile), pour un chevauchement visuellement identique
+       plutôt que relativement plus lâche une fois les cartes agrandies. */
+    margin-right: calc(var(--work-card-w) * -0.188);
+  }
+  .work__carousel {
+    scroll-snap-type: x mandatory; /* accroché plus franchement qu'en mobile (proximity) : navigation à la souris/molette plus nette */
+    cursor: grab;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 120px,
+      #000 calc(100% - 120px),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 120px,
+      #000 calc(100% - 120px),
+      transparent 100%
+    );
+  }
+  .work__carousel:active {
+    cursor: grabbing;
+  }
+  .work {
+    /* Constant : voir le commentaire détaillé sur .work__head ci-dessous
+       — le débord sous les cartes est désormais toujours le même (24px)
+       quelle que soit la hauteur réelle du texte, donc l'espace à
+       réserver avant "Trusted" l'est aussi (24px de débord + 16px de
+       marge). */
+    /* max() : évite un padding négatif (invalide en CSS) si jamais
+       --work-head-h est plus petit que les 150px de recul de
+       .work__head ci-dessous — garantit toujours au moins 16px avant
+       "Trusted". */
+    padding-bottom: max(16px, calc(var(--work-head-h, 180px) - 134px));
+  }
+  .work__head {
+    position: absolute;
+    top: 100%;
+    bottom: auto;
+    left: 0;
+    right: 0;
+    /* Remonte le bloc titre/texte/bouton de 150px, pour qu'il chevauche
+       le bas des cartes au lieu de flotter dans le vide en dessous. */
+    margin-top: -150px;
+    flex-direction: row;
+    align-items: center;
+    gap: 32px;
+  }
+  .work__head-row {
+    display: contents;
+  }
+  .work__title {
+    order: 1;
+  }
+  .work__subtitle {
+    order: 2;
+    flex: 1 1 auto;
+    margin: 0 auto;
+    /* Nettement plus lisible qu'en mobile (14-16.5px, calibré pour un
+       petit écran) — sur desktop, à côté d'un titre "WORK" imposant et
+       d'un bouton à la même échelle, ce texte paraissait chétif. */
+    font-size: 19px;
+  }
+  .work__cta {
+    order: 3;
+  }
+}
+
+/* ---- Desktop uniquement : bandeau "Ils me font confiance" — logos
+   plus espacés, et fondu en opacité sur les bords gauche/droite du
+   bandeau (mask-image) pour adoucir la coupure nette de l'overflow au
+   lieu d'un bord franc, à la demande. ---- */
+@media (min-width: 1000px) {
+  .trusted__track,
+  .trusted__group {
+    gap: 48px;
+  }
+  .trusted__marquee {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 80px,
+      #000 calc(100% - 80px),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 80px,
+      #000 calc(100% - 80px),
+      transparent 100%
+    );
+  }
 }
