@@ -2021,11 +2021,21 @@ textarea:focus-visible {
 @media (min-width: 1000px) {
   :root { --frame-max: 1180px; }
 
-  /* Les liens de nav (Work / Studio / Contact) restent masqués sur
-     mobile/tablette (le menu plein écran suffit) ; à partir d'ici il y
-     a la place de les afficher en plus du bouton menu, comme sur un
-     site desktop classique. */
-  .nav__links { display: flex; }
+  /* Les liens de nav restent masqués sur mobile/tablette (le menu
+     plein écran suffit) ; à partir d'ici il y a la place de les
+     afficher en plus du bouton menu, comme sur un site desktop
+     classique. Centrés par rapport à la page plutôt que par rapport à
+     l'espace restant entre le switch de langue et le bouton menu (qui
+     n'ont pas la même largeur, ce qui les décalait légèrement du vrai
+     centre) — même principe que .nav__logo un peu plus haut : position
+     absolute + translate, indépendant de ses voisins. */
+  .nav__links {
+    display: flex;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
 }
 
 /* ---- Palier desktop : au-delà de cette largeur, le cadre suit
