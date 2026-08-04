@@ -2106,18 +2106,27 @@ textarea:focus-visible {
 /* ---- Galerie 3 colonnes (variante de .case-gallery, 2 colonnes par
    défaut) : pour les séries de 6+ images plutôt que les paires
    avant/après. Mêmes proportions (aspect-ratio, object-fit) que le
-   reste du site — seule la largeur de colonne change. ---- */
-.case-gallery--3col {
-  grid-template-columns: repeat(3, 1fr);
+   reste du site — seule la largeur de colonne change. Scopée à partir
+   de 721px (juste après le point où .case-gallery repasse à 1
+   colonne en mobile) : sans ça, cette règle — plus bas dans la
+   feuille de styles donc prioritaire — écrasait le collapse mobile et
+   entassait 3 colonnes sur un téléphone. ---- */
+@media (min-width: 721px) {
+  .case-gallery--3col {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 /* ---- Variante "2 en haut, 1 en dessous, en pleine largeur" : pour des
    captures d'écran logiciel (format paysage, pas portrait comme le
    reste du site) — aspect-ratio 16/9 plutôt que le 3/4 hérité de
    .case-gallery, sinon ces captures très larges se seraient fait
-   sévèrement recadrer en hauteur. */
-.case-gallery--2-1 {
-  grid-template-columns: repeat(2, 1fr);
+   sévèrement recadrer en hauteur. Même raison de scope à 721px que
+   ci-dessus. ---- */
+@media (min-width: 721px) {
+  .case-gallery--2-1 {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 .case-gallery--2-1 .case-figure img {
   aspect-ratio: 16 / 9;
