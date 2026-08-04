@@ -2008,12 +2008,14 @@ textarea:focus-visible {
   }
 }
 
-/* ---- Palier desktop : "PORTFOLIO" d'abord agrandi de 25% par rapport
-   à la tablette (620px × 1.25 = 775px), puis re-réduit de 25% à la
-   demande (775px × 0.75 ≈ 581px). ---- */
+/* ---- Palier desktop : "PORTFOLIO" réduit pour respirer davantage —
+   les tailles fixes précédentes (jusqu'à 775px) étaient bien trop
+   massives sur un écran desktop "normal" (pas un très grand écran),
+   où la hauteur de fenêtre réelle est souvent limitée. Revenu à une
+   taille plus proche de la tablette, sobre. ---- */
 @media (min-width: 1000px) {
   .hero__text {
-    max-width: 581px;
+    max-width: 460px;
   }
 }
 
@@ -2107,11 +2109,11 @@ textarea:focus-visible {
   }
 }
 /* ---- Desktop uniquement : bandeau de services (STRATEGY · ARTISTIC
-   DIRECTION · ...) — éléments nettement plus espacés qu'en mobile pour
-   respirer sur un écran large, à la demande. ---- */
+   DIRECTION · ...) — éléments plus espacés qu'en mobile pour respirer
+   sur un écran large, sans excès. ---- */
 @media (min-width: 1000px) {
   .marquee__item {
-    padding: 0 48px;
+    padding: 0 26px;
   }
 }
 
@@ -2132,7 +2134,7 @@ textarea:focus-visible {
    au texte maintenant hors du conteneur du carrousel. */
 @media (min-width: 1000px) {
   .work__carousel {
-    --work-card-w: min(30vw, 380px);
+    --work-card-w: min(22vw, 280px);
   }
   .work-card {
     /* Proportionnel au nouveau --work-card-w (même ratio que -46px sur
@@ -2162,16 +2164,12 @@ textarea:focus-visible {
     cursor: grabbing;
   }
   .work {
-    /* Constant : voir le commentaire détaillé sur .work__head ci-dessous
-       — le débord sous les cartes est désormais toujours le même (24px)
-       quelle que soit la hauteur réelle du texte, donc l'espace à
-       réserver avant "Trusted" l'est aussi (24px de débord + 16px de
-       marge). */
-    /* max() : évite un padding négatif (invalide en CSS) si jamais
-       --work-head-h est plus petit que les 150px de recul de
-       .work__head ci-dessous — garantit toujours au moins 16px avant
-       "Trusted". */
-    padding-bottom: max(16px, calc(var(--work-head-h, 180px) - 134px));
+    /* --work-head-h - 74px : compense les -90px de margin-top de
+       .work__head ci-dessous (débord de 16px sous les cartes, +16px de
+       marge avant "Trusted" = -90+16=-74). max() évite un padding
+       négatif (invalide en CSS) si jamais --work-head-h est plus petit
+       que ce recul. */
+    padding-bottom: max(16px, calc(var(--work-head-h, 180px) - 74px));
   }
   .work__head {
     position: absolute;
@@ -2179,9 +2177,9 @@ textarea:focus-visible {
     bottom: auto;
     left: 0;
     right: 0;
-    /* Remonte le bloc titre/texte/bouton de 150px, pour qu'il chevauche
-       le bas des cartes au lieu de flotter dans le vide en dessous. */
-    margin-top: -150px;
+    /* Remonte le bloc titre/texte/bouton pour qu'il touche légèrement
+       le bas des cartes, sans les recouvrir excessivement. */
+    margin-top: -90px;
     flex-direction: row;
     align-items: center;
     gap: 32px;
@@ -2213,7 +2211,7 @@ textarea:focus-visible {
 @media (min-width: 1000px) {
   .trusted__track,
   .trusted__group {
-    gap: 48px;
+    gap: 26px;
   }
   .trusted__marquee {
     -webkit-mask-image: linear-gradient(

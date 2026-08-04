@@ -44,7 +44,7 @@ window.addEventListener("load", () => setTimeout(setViewportHeightVar, 300));
 // plutôt que de deviner une taille en CSS, on mesure le texte réellement
 // rendu (Canvas 2D) et on calcule la taille exacte qui le fait occuper
 // 100% de la largeur disponible, quelle que soit la police chargée.
-function fitTextToWidth(el, { fontFamily = 'Edition, Oswald, "Arial Narrow", sans-serif', fontWeight = 400, scale = 1, widthRef = null } = {}) {
+function fitTextToWidth(el, { fontFamily = 'Edition, Oswald, "Arial Narrow", sans-serif', fontWeight = 400, scale = 1, widthRef = null, maxSize = Infinity } = {}) {
   if (!el) return null;
   // La largeur cible est celle de l'élément lui-même (il est en `width:
   // 100%` dans son conteneur) — pas `container.clientWidth`, qui inclurait
@@ -65,13 +65,21 @@ function fitTextToWidth(el, { fontFamily = 'Edition, Oswald, "Arial Narrow", san
   const measured = ctx.measureText(text).width;
   if (!measured) return null;
 
-  const finalSize = (targetWidth / measured) * probeSize;
+  // Plafond de sécurité : si la police réellement chargée (Edition) a des
+  // glyphes plus étroits que prévu au moment du calcul — polices encore en
+  // cours de chargement, métriques différentes d'un système à l'autre,
+  // etc. — viser 100% de la largeur peut réclamer une taille de police
+  // démesurée, puisque le calcul ne fait aucune hypothèse sur la hauteur
+  // que ça donnera. `maxSize` (calibré par appelant, voir plus bas) borne
+  // toujours la hauteur finale, quelle que soit la largeur du conteneur ou
+  // les métriques réelles de la police à ce moment précis.
+  const finalSize = Math.min((targetWidth / measured) * probeSize, maxSize);
   el.style.fontSize = `${finalSize}px`;
   return targetWidth;
 }
 
 function fitFullWidthText() {
-  fitTextToWidth(document.querySelector(".hero__title"));
+  fitTextToWidth(document.querySelector(".hero__title"), { maxSize: 175 });
   // "About" reste collé à gauche mais on veut qu'il s'étende jusqu'au
   // centre de la page (donc 50% de la largeur du conteneur), pas toute
   // la largeur — d'où scale: 0.5. Comme le titre est maintenant un item
@@ -81,6 +89,7 @@ function fitFullWidthText() {
   fitTextToWidth(aboutTitle, {
     scale: 0.5,
     widthRef: document.querySelector(".about__title-row"),
+    maxSize: 190,
   });
   sizeAboutShape();
 
@@ -118,7 +127,7 @@ function fitFullWidthText() {
   // "Contact" occupe toute la largeur disponible dans la carte, comme
   // "PORTFOLIO" dans le hero — légère marge (scale: 0.94) pour ne pas
   // toucher les bords de la carte.
-  fitTextToWidth(document.querySelector(".contact__title"), { scale: 0.94 });
+  fitTextToWidth(document.querySelector(".contact__title"), { scale: 0.94, maxSize: 210 });
 }
 
 // La forme (flèche/éclair) est un item flex juste à côté du mot "About" —
