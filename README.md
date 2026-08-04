@@ -13,8 +13,7 @@ portfolio/
 ├── index.html                  page d'accueil (hero, à propos, work, trusted by, contact)
 ├── certifications.html         page de section — 3 travaux "Certifications"
 ├── music.html                  page de section — 3 travaux "Music"
-├── media.html                  page de section — 3 travaux "Media"
-├── brand-design.html           page de section — 3 travaux "Brand design"
+├── brand-design.html           page de section — 2 travaux "Brand design"
 ├── css/style.css               tous les styles + tokens (couleurs, typos, espacements)
 ├── js/
 │   ├── preload.js              écran de chargement (avant la landing page)
@@ -138,20 +137,31 @@ Netlify fonctionne directement).
 
 ## Pages de section
 
-Chaque catégorie du menu (Certifications, Music, Media, Brand design)
-ouvre sa propre page (`certifications.html`, `music.html`, `media.html`,
-`brand-design.html`), toutes construites sur le même gabarit :
+Chaque catégorie du menu (Certifications, Music, Brand design,
+**Concept**) ouvre sa propre page (`certifications.html`, `music.html`,
+`brand-design.html`, `concept.html`), toutes construites
+sur le même gabarit :
 
 - la nav, toujours affichée dans son état "logo visible + fond plein"
   (pas de hero 3D à traverser dessous sur ces pages) ;
 - le nom de la section en grand, en police Edition, redimensionné en JS
   pour occuper toute la largeur (même mécanisme que "PORTFOLIO" en
   accueil) ;
-- 3 cartes carrées, chacune un lien direct vers un travail — empilées
-  sur mobile, en rangée qui s'enroule (flex-wrap) dès la tablette —
-  actuellement en fond dégradé de substitution avec juste un titre
-  (à remplacer par les vraies images/pages de projet une fois prêtes) ;
+- 2 à 4 cartes carrées (4 sur Concept), chacune un lien direct vers un
+  travail — empilées sur mobile, en rangée qui s'enroule (flex-wrap) dès
+  la tablette — actuellement en fond dégradé de substitution avec juste
+  un titre (à remplacer par les vraies images/pages de projet une fois
+  prêtes) ;
 - le footer.
+
+**"Concept"** est à part des trois autres : ce sont des travaux
+personnels, non commandés par un client (Moncler, merch MILS 4,
+logotype 7W, affiche automobile) — d'où le sous-titre "Travaux fictifs"
+sur sa page d'index, et un badge "Type → Personal project" sur chaque
+page de détail plutôt que "Client". Ses pages de détail sont
+volontairement minimalistes : juste le hero (titre, mission) suivi
+directement des visuels, sans le texte de contexte ("case-section")
+des autres études de cas.
 
 Le bouton "See more" du carrousel "Work" en accueil ouvre directement
 le menu (au lieu de renvoyer vers le formulaire de contact), pour
@@ -164,3 +174,9 @@ retrouver ces 4 sections en un clic.
   vrai contenu
 - Remplacer les visuels de fond des cartes "Work" par tes vraies images
   de projets (actuellement des dégradés de substitution)
+- Déposer les visuels de la section "Concept" : les 4 cartes
+  (`assets/img/concept/moncler.webp`, `merch-mils4.webp`,
+  `7w-logotype.webp`, `car-poster.webp`) et les images/vidéos de chaque
+  page de détail (`assets/img/work/concept-moncler/`,
+  `concept-mils4/`, `concept-7w/`, `concept-car-poster/` — noms de
+  fichiers numérotés dans l'ordre d'apparition sur chaque page)

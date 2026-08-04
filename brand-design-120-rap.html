@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>120%RAP — Logotype & art direction | Cold Production</title>
+<meta name="description" content="Kylian B. — Custom-built logotype and chromatic variation system for the media outlet 120%RAP." />
+
+<meta name="color-scheme" content="only light" />
+<link rel="stylesheet" href="style.css?v=16" />
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<!-- En dehors de .frame volontairement : .frame a un `transform` (pour
+     l'accélération GPU du rendu 3D), qui casse `position: fixed` sur ses
+     descendants — un nav fixed à l'intérieur scrollerait avec le reste
+     du contenu au lieu de rester épinglé à l'écran. -->
+<header class="nav is-scrolled">
+  <div class="nav__lang" role="group" aria-label="Langue">
+    <button class="nav__lang-btn" type="button" data-lang="fr" aria-pressed="false">FR</button>
+    <button class="nav__lang-btn is-active" type="button" data-lang="en" aria-pressed="true">EN</button>
+  </div>
+
+  <a class="nav__logo" href="index.html" aria-label="Back to top">
+    <img src="assets/img/logo-mark.svg" alt="Cold Production" />
+  </a>
+
+  <nav class="nav__links" aria-label="Navigation principale">
+    <a href="index.html#work">Work</a>
+    <a href="index.html#contact">Contact</a>
+  </nav>
+
+  <button class="nav__burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu-overlay">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- ============ MENU (plein écran) ============ -->
+<div class="menu-overlay" id="menu-overlay" aria-hidden="true">
+  <button class="menu-overlay__close" type="button" aria-label="Close menu">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M2 2l16 16M18 2 2 18" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+  </button>
+
+  <a class="menu-overlay__logo" href="index.html" aria-label="Back to home">
+    <img src="assets/img/logo-mark.svg" alt="Cold Production" />
+  </a>
+
+  <nav class="menu-overlay__nav" aria-label="Work categories">
+    <a class="menu-overlay__item" href="certifications.html">
+      <span class="menu-overlay__item-title" data-fr="Certifications">Certifications</span>
+      <span class="menu-overlay__item-sub" data-fr="Design de certification SNEP">Reward design</span>
+      <span class="menu-overlay__item-line" aria-hidden="true"></span>
+    </a>
+    <a class="menu-overlay__item" href="music.html">
+      <span class="menu-overlay__item-title" data-fr="Musique">Music</span>
+      <span class="menu-overlay__item-sub" data-fr="Direction artistique">Artistic direction</span>
+      <span class="menu-overlay__item-line" aria-hidden="true"></span>
+    </a>
+    <a class="menu-overlay__item" href="brand-design.html">
+      <span class="menu-overlay__item-title" data-fr="Identité de marque">Brand design</span>
+      <span class="menu-overlay__item-sub" data-fr="Identité &amp; branding">Identity &amp; branding</span>
+      <span class="menu-overlay__item-line" aria-hidden="true"></span>
+    </a>
+    <a class="menu-overlay__item" href="concept.html">
+      <span class="menu-overlay__item-title" data-fr="Concept">Concept</span>
+      <span class="menu-overlay__item-sub" data-fr="Travaux fictifs">Self-initiated concepts</span>
+      <span class="menu-overlay__item-line" aria-hidden="true"></span>
+    </a>
+  </nav>
+
+  <a class="menu-overlay__insta" href="https://www.instagram.com/cxld_prod/" target="_blank" rel="noopener noreferrer" aria-label="Cold Production on Instagram">
+    <svg viewBox="0 0 499.13 499.09" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor">
+      <path d="M319.45,499.05l-141.53.04-44.75-2.09c-20.32-.95-39.47-6.29-57.87-15.31-24.49-12.01-44.41-31.54-56.87-55.86-9.79-19.1-14.59-39.41-16.36-60.66C.81,350.04,0,335.83,0,320.43v-141.76c0-15.67.81-30.15,2.14-45.54,1.78-20.74,6.48-40.52,15.92-59.21,12.08-23.94,31.36-43.31,55.21-55.57,18.86-9.69,38.88-14.45,59.89-16.24C148.35.81,162.69.04,178.08.04L321.37,0c15.34,0,29.54.82,44.63,2.11,21,1.8,41.06,6.49,59.91,16.21,23.83,12.28,43.1,31.68,55.19,55.6,9.44,18.69,14.93,38.43,15.92,59.21l2.12,44.63v143.58s-2.12,44.63-2.12,44.63c-1.02,21.52-6.85,41.98-16.98,61.17-12.27,23.26-31.38,42.03-54.83,53.92-18.92,9.59-38.98,15.09-60.01,16l-45.74,1.98ZM318.62,454.08l41.87-1.81c10.92-.47,21.29-2.84,31.71-6.17,24.5-7.82,43.73-26.11,52.59-50.24,4.22-11.49,7.02-23.04,7.56-35.31l1.81-41.12v-139.75s-1.87-42.03-1.87-42.03c-.49-10.87-3.01-21.13-6.41-31.47-8.38-25.5-28.12-44.99-53.66-53.19-12.39-3.98-24.6-6.34-37.69-6.7l-56.03-1.56-117.88.21c-14.44.03-27.82.81-42.04,1.83-55.45,3.99-87.88,36.41-91.74,91.88-.99,14.3-1.81,27.78-1.81,42.24v137.33c0,14.76.81,28.54,1.89,43.1,2.78,37.4,19.81,69.68,55.64,83.17,11.71,4.41,23.57,7.25,36.1,7.77l43.41,1.79,136.54.02Z"/>
+      <path d="M234.57,122.06c71.07-8.37,134.34,42.81,142.52,112.45,8.28,70.49-42.23,134.28-112.65,142.49-70.02,8.16-133.61-41.75-142.24-111.78-8.61-69.88,41.07-134.77,112.37-143.16ZM238.56,167.06c-46.56,6.23-77.87,49.16-71.41,94.3s48.28,76.76,93.43,70.72c45.44-6.08,77.64-48.02,71.51-93.57s-47.26-77.66-93.54-71.46Z"/>
+      <path d="M375.61,87.1c16.73-4.23,32.68,5.98,36.57,22.07s-5.88,32.5-22.84,36.25c-14.98,3.31-31.12-5.62-35.31-21.65s4.54-32.35,21.59-36.66Z"/>
+    </svg>
+  </a>
+</div>
+
+<div class="frame">
+
+<!-- Grain / bruit superposé sur tout le site -->
+<div class="grain" aria-hidden="true"></div>
+
+<!-- Lueurs dynamiques sur tout le fond — même calque que sur la page
+     d'accueil, voir index.html pour le détail des commentaires. -->
+<div class="bg-glow" aria-hidden="true">
+  <span class="bg-glow__layer bg-glow__layer--a"></span>
+  <span class="bg-glow__layer bg-glow__layer--b"></span>
+  <span class="bg-glow__layer bg-glow__layer--c"></span>
+</div>
+
+<!-- ============ PROJECT HERO ============ -->
+<section class="case-hero">
+  <a class="case-hero__back" href="brand-design.html">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span data-fr="Identité de marque">Brand design</span>
+  </a>
+  <p class="case-hero__eyebrow" data-fr="Identité de marque — Média &amp; rap">Brand design — Media &amp; rap</p>
+  <h1 class="case-hero__title">
+    <img class="case-hero__logo" src="assets/img/work/120-rap/120-rap.svg" alt="120%RAP" />
+  </h1>
+  <p class="case-hero__lead" data-fr="Un logo sur mesure conçu pour un média digital reconnu (100K abonnés) axé principalement sur l&#x27;actualité rap, pensé dès le départ comme une identité visuelle unique, disponible dans toute une gamme de variations chromatiques, capable d&#x27;accompagner tout type de contenu tout en restant instantanément reconnaissable comme 120%RAP.">A custom logo designed for a well-known digital media outlet (100K subscribers) focused primarily on rap news, conceived from the outset as a unique visual identity, available in a full range of color variations, capable of complementing any type of content while remaining instantly recognizable as 120%RAP.</p>
+  <ul class="case-hero__meta">
+    <li><span data-fr="Client">Client</span>120%RAP</li>
+    <li><span data-fr="Mission">Mission</span>Logo &amp; variations</li>
+    <li><span data-fr="Livré">Delivered</span>February 2025</li>
+  </ul>
+</section>
+
+<!-- ============ 1. VARIATION SYSTEM — FIRST EXAMPLE ============ -->
+<section class="case-section">
+  <h2 class="case-section__title" data-fr="Un système de déclinaisons piloté par le contenu">A content-driven variation system</h2>
+  <p class="case-section__text" data-fr="Un média comme 120%RAP publie plusieurs types de contenu au quotidien : actualité musicale, foot, catch, cinéma, sport en général, et bien plus. Un simple logo statique n&#x27;aurait pas suffi : le projet demandait un &lt;strong&gt;système de déclinaisons&lt;/strong&gt;, où chaque thématique a sa propre palette tout en conservant exactement la même structure de base. Le bloc &quot;120%&quot; reste blanc et fixe dans toutes les versions ; il sert d&#x27;ancrage à la marque, reconnaissable en un coup d&#x27;œil. Le second bloc, lui, adopte une palette propre à sa thématique.">A media outlet like 120%RAP publishes several types of content daily: music news, soccer, wrestling, movies, sports in general, and more. A simple static logo wouldn’t have been enough: the project required a <strong>variation system</strong>, in which each theme has its own color scheme while maintaining exactly the same basic structure. The “120%” block remains white and fixed in all versions; it serves as the brand’s anchor, recognizable at a glance. Meanwhile, the second block adopts a color scheme specific to its theme.</p>
+</section>
+
+<figure class="case-figure">
+  <img src="assets/img/work/120-rap/1-logo-final.png" alt="120%RAP logotype variations for the Foot (green), Catch (red) and Sports (gold) themes" loading="lazy" />
+  <figcaption class="case-figure__caption" data-fr="Le logotype finalisé, mis en scène en contexte.">The finished logotype, staged in context.</figcaption>
+</figure>
+
+<!-- ============ 2. LOGOTYPE CONSTRUCTION ============ -->
+<section class="case-section">
+  <h2 class="case-section__title" data-fr="Une construction de logotype entièrement sur mesure">A custom-built logotype construction</h2>
+  <p class="case-section__text" data-fr="Plutôt que d&#x27;utiliser une police existante, le logo 120%RAP a été redessiné lettre par lettre à partir de zéro. Le tracé vectoriel suit une grille très stricte : angles uniformes entre les lettres, contreformes calibrées, et un ratio fixe qui garantit un rendu net à toute échelle, que ce soit une miniature de 40px dans un feed Instagram ou une affiche plein écran.">Rather than using an existing font, the 120%RAP logo was redesigned letter by letter from scratch. The vector design follows a very strict grid: uniform angles between letters, calibrated counterforms, and a fixed aspect ratio that ensure a crisp rendering at any scale, whether it’s a 40-px thumbnail in an Instagram feed or a full-screen poster.</p>
+  <p class="case-section__text" data-fr="La ligne diagonale qui traverse le bloc &quot;120%&quot; crée un contraste dynamique avec le bloc &quot;RAP&quot;, plus massif et vertical : ce contraste donne au logo une lisibilité immédiate, même en mouvement (Stories, Reels, intros vidéo). L&#x27;ensemble du système a été livré en &lt;strong&gt;versions positive et négative&lt;/strong&gt;, testées et validées sur fonds clairs comme sombres. Une exigence essentielle pour un logo destiné à apparaître chaque semaine sur des dizaines de visuels différents.">The diagonal line that runs through the “120%” block creates a dynamic contrast with the more massive, vertical “RAP” block: this contrast gives the logo immediate legibility, even in motion (Stories, Reels, video intros). The entire system was delivered in <strong>positive and negative versions</strong>, tested and validated on both light and dark backgrounds. This is an essential requirement for a logo intended to appear weekly on dozens of different visuals.</p>
+</section>
+
+<figure class="case-figure">
+  <img src="assets/img/work/120-rap/2-negatif-positif.png" alt="120%RAP logotype construction grid, positive and negative versions with alignment guides" loading="lazy" />
+  <figcaption class="case-figure__caption" data-fr="Grille de construction : versions positive et négative, guides d&#x27;alignement et zone de protection.">Construction grid: positive and negative versions, alignment guides and clear space.</figcaption>
+</figure>
+
+<!-- ============ 3. THE LOGOTYPE IN CONTEXT ============ -->
+<figure class="case-figure">
+  <img src="assets/img/work/120-rap/3-declinaisons-partie-1.png" alt="Final 120%RAP logotype in gradient blue, staged over a black and white street visual" loading="lazy" />
+  <figcaption class="case-figure__caption" data-fr="Foot, Catch, Sports : trois thématiques, trois signatures colorimétriques distinctes.">Foot, Catch, Sports: three themes, three distinct color signatures.</figcaption>
+</figure>
+
+<!-- ============ 4. VARIATION SYSTEM — SECOND EXAMPLE ============ -->
+<section class="case-section">
+  <h2 class="case-section__title" data-fr="Le même système, étendu à la culture et au divertissement">The same system, extended to culture and entertainment</h2>
+  <p class="case-section__text" data-fr="Vert pour le foot, rouge pour le catch, or pour le sport la même logique se prolonge sur les contenus streaming, cinéma et musique, avec leurs propres signatures magenta, orange et rose. Résultat : dans un feed où l&#x27;attention se gagne ou se perd en une fraction de seconde, l&#x27;audience identifie &lt;em&gt;à la fois&lt;/em&gt; la marque et le type de contenu avant même de lire la légende.">Green for football, red for wrestling, gold for sports the same logic carries over to streaming, film and music content, with magenta, orange and pink signatures of their own. The result: in a feed where attention is won or lost in a fraction of a second, the audience identifies <em>both</em> the brand and the type of content before even reading the caption.</p>
+</section>
+
+<figure class="case-figure">
+  <img src="assets/img/work/120-rap/4-declinaisons-partie-2.png" alt="120%RAP logotype variations for the Stream (magenta), Ciné (orange) and Music (pink) themes" loading="lazy" />
+  <figcaption class="case-figure__caption" data-fr="Stream, Ciné, Music : le même système de déclinaisons appliqué aux contenus culture &amp; divertissement.">Stream, Ciné, Music: the same variation system applied to culture &amp; entertainment content.</figcaption>
+</figure>
+
+<!-- ============ OVERALL ART DIRECTION ============ -->
+<section class="case-section">
+  <h2 class="case-section__title" data-fr="Une direction artistique complète, pas seulement un logotype">A complete art direction, not just a logotype</h2>
+  <p class="case-section__text" data-fr="La vraie valeur de ce projet ne s&#x27;arrête pas aux déclinaisons du logo : chaque couleur thématique a été pensée en amont comme un &lt;strong&gt;code couleur transversal&lt;/strong&gt;, ensuite réutilisé par 120%RAP sur toute son identité visuelle, ses templates, ses éléments graphiques et la mise en scène de ses différents formats de contenu. Le logotype devient le point de départ d&#x27;un système cohérent et évolutif, capable d&#x27;accueillir de nouvelles thématiques sans jamais perdre en reconnaissance de marque.">The real value of this project doesn't stop at the logo variations: each theme color was designed upfront as a <strong>cross-content color code</strong>, later reused by 120%RAP across its entire visual identity, templates, graphic elements and the staging of its different content formats. The logotype becomes the starting point of a coherent, scalable system, able to welcome new themes without ever losing brand recognition.</p>
+  <p class="case-section__text" data-fr="C&#x27;est cette approche systémique une construction unique, une grammaire colorimétrique partagée, des déclinaisons pensées pour l&#x27;usage quotidien réel du média sur les réseaux sociaux qui distingue une direction artistique complète d&#x27;un simple exercice de logo.">It's this systemic approach a single construction, a shared color grammar, variations designed for the media's real day-to-day use on social platforms that sets a complete art direction apart from a simple logo exercise.</p>
+</section>
+
+<footer class="footer">
+  <span>© <span id="year"></span> COLD PRODUCTION</span>
+  <a class="footer__insta" href="https://www.instagram.com/cxld_prod/" target="_blank" rel="noopener noreferrer" aria-label="Cold Production on Instagram">
+    <svg viewBox="0 0 499.13 499.09" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor">
+      <path d="M319.45,499.05l-141.53.04-44.75-2.09c-20.32-.95-39.47-6.29-57.87-15.31-24.49-12.01-44.41-31.54-56.87-55.86-9.79-19.1-14.59-39.41-16.36-60.66C.81,350.04,0,335.83,0,320.43v-141.76c0-15.67.81-30.15,2.14-45.54,1.78-20.74,6.48-40.52,15.92-59.21,12.08-23.94,31.36-43.31,55.21-55.57,18.86-9.69,38.88-14.45,59.89-16.24C148.35.81,162.69.04,178.08.04L321.37,0c15.34,0,29.54.82,44.63,2.11,21,1.8,41.06,6.49,59.91,16.21,23.83,12.28,43.1,31.68,55.19,55.6,9.44,18.69,14.93,38.43,15.92,59.21l2.12,44.63v143.58s-2.12,44.63-2.12,44.63c-1.02,21.52-6.85,41.98-16.98,61.17-12.27,23.26-31.38,42.03-54.83,53.92-18.92,9.59-38.98,15.09-60.01,16l-45.74,1.98ZM318.62,454.08l41.87-1.81c10.92-.47,21.29-2.84,31.71-6.17,24.5-7.82,43.73-26.11,52.59-50.24,4.22-11.49,7.02-23.04,7.56-35.31l1.81-41.12v-139.75s-1.87-42.03-1.87-42.03c-.49-10.87-3.01-21.13-6.41-31.47-8.38-25.5-28.12-44.99-53.66-53.19-12.39-3.98-24.6-6.34-37.69-6.7l-56.03-1.56-117.88.21c-14.44.03-27.82.81-42.04,1.83-55.45,3.99-87.88,36.41-91.74,91.88-.99,14.3-1.81,27.78-1.81,42.24v137.33c0,14.76.81,28.54,1.89,43.1,2.78,37.4,19.81,69.68,55.64,83.17,11.71,4.41,23.57,7.25,36.1,7.77l43.41,1.79,136.54.02Z"/>
+      <path d="M234.57,122.06c71.07-8.37,134.34,42.81,142.52,112.45,8.28,70.49-42.23,134.28-112.65,142.49-70.02,8.16-133.61-41.75-142.24-111.78-8.61-69.88,41.07-134.77,112.37-143.16ZM238.56,167.06c-46.56,6.23-77.87,49.16-71.41,94.3s48.28,76.76,93.43,70.72c45.44-6.08,77.64-48.02,71.51-93.57s-47.26-77.66-93.54-71.46Z"/>
+      <path d="M375.61,87.1c16.73-4.23,32.68,5.98,36.57,22.07s-5.88,32.5-22.84,36.25c-14.98,3.31-31.12-5.62-35.31-21.65s4.54-32.35,21.59-36.66Z"/>
+    </svg>
+  </a>
+</footer>
+
+</div><!-- /.frame -->
+
+<!-- En dehors de .frame pour la même raison que le nav : .frame a un
+     `transform` qui casse `position: fixed` sur ses descendants. -->
+<button class="back-to-top" type="button" aria-label="Back to top">
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 13V3M3 7l5-5 5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+
+<script type="module" src="main.js?v=11"></script>
+</body>
+</html>

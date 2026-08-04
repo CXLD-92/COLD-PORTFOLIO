@@ -1016,7 +1016,7 @@ textarea:focus-visible {
      figé sur des cartes précises. Les valeurs par défaut (0deg, 0, 1)
      ci-dessous ne servent que de filet de secours avant le premier
      calcul JS. */
-  transform: translateY(var(--work-lift, 0)) rotate(var(--work-rotate, 0deg)) scale(var(--work-scale, 1));
+  transform: translateY(calc(var(--work-lift, 0px) * var(--work-lift-scale, 1))) rotate(calc(var(--work-rotate, 0deg) * var(--work-rotate-scale, 1))) scale(var(--work-scale, 1));
   transition: box-shadow 0.15s ease-out;
   will-change: transform, box-shadow;
   margin-right: -46px; /* chevauchement plus serré entre les cartes */
@@ -1837,6 +1837,15 @@ textarea:focus-visible {
   .case-gallery {
     max-width: 600px;
   }
+  /* Les galeries à plusieurs colonnes (3col, 2-1) partagent leur
+     largeur totale entre plusieurs images — le plafond de 600px
+     ci-dessus (pensé pour UNE image/vidéo pleine largeur) les rendait
+     minuscules une fois divisé par 3. Elles gardent donc un plafond
+     nettement plus large sur desktop, à la demande. */
+  .case-gallery--3col,
+  .case-gallery--2-1 {
+    max-width: 1000px;
+  }
 }
 
 /* ---- Bandeau crédits de fermeture ---- */
@@ -2079,6 +2088,44 @@ textarea:focus-visible {
   }
 }
 
+/* ---- Page "Concept" : grille fixe 2×2 plutôt que le flex-wrap
+   générique ci-dessus (qui aurait donné 3 cartes sur une ligne puis 1
+   toute seule, pour ses 4 cartes) — 2 cartes en haut, 2 en dessous, à
+   la demande. ---- */
+@media (min-width: 640px) {
+  .section-projects--grid2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 900px;
+  }
+  .section-projects--grid2 .project-card {
+    max-width: none;
+  }
+}
+
+/* ---- Galerie 3 colonnes (variante de .case-gallery, 2 colonnes par
+   défaut) : pour les séries de 6+ images plutôt que les paires
+   avant/après. Mêmes proportions (aspect-ratio, object-fit) que le
+   reste du site — seule la largeur de colonne change. ---- */
+.case-gallery--3col {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* ---- Variante "2 en haut, 1 en dessous, en pleine largeur" : pour des
+   captures d'écran logiciel (format paysage, pas portrait comme le
+   reste du site) — aspect-ratio 16/9 plutôt que le 3/4 hérité de
+   .case-gallery, sinon ces captures très larges se seraient fait
+   sévèrement recadrer en hauteur. */
+.case-gallery--2-1 {
+  grid-template-columns: repeat(2, 1fr);
+}
+.case-gallery--2-1 .case-figure img {
+  aspect-ratio: 16 / 9;
+}
+.case-gallery--2-1 .case-figure:nth-child(3) {
+  grid-column: 1 / -1;
+}
+
 /* ---- Carte "Contact" : le titre "CONTACT" est dimensionné en JS pour
    occuper 100% de la largeur de .contact__card (voir main.js →
    fitTextToWidth) — tant que .contact (donc la carte) restait plafonné
@@ -2228,5 +2275,71 @@ textarea:focus-visible {
       #000 calc(100% - 80px),
       transparent 100%
     );
+  }
+}
+
+/* ---- Desktop uniquement : "About" — le conteneur (1100px, centré)
+   restait mathématiquement au milieu de la page, mais son contenu
+   (titre + texte, plus étroit que ces 1100px, aligné à gauche à
+   l'intérieur) laissait un vide surtout visible à DROITE du bloc une
+   fois le cadre très large — l'ensemble paraissait donc "collé" à
+   gauche de la page, pas centré. En resserrant le conteneur autour de
+   la largeur réelle de son contenu, il n'y a plus de vide interne
+   asymétrique et le tout se centre correctement à l'œil, pas juste au
+   calcul. ---- */
+@media (min-width: 1000px) {
+  .about {
+    max-width: 820px;
+  }
+}
+
+/* ---- Desktop uniquement : carrousel "Work" — arc/rotation adouci.
+   Les cartes ont grossi (voir plus haut, jusqu'à 380px au lieu de
+   244px en mobile) sans que l'angle de rotation change, ce qui
+   amplifiait mécaniquement le déplacement visuel des cartes les plus
+   excentrées (bord de l'arc) — elles paraissaient décrochées plutôt
+   que simplement inclinées. Rotation et élévation max réduites d'un
+   tiers environ pour un arc plus discret à cette taille de carte. ---- */
+@media (min-width: 1000px) {
+  .work__carousel {
+    --work-rotate-scale: 0.65;
+    --work-lift-scale: 0.65;
+  }
+}
+
+/* ---- Desktop uniquement : menu plein écran compacté (pour tenir sur
+   un écran sans scroll), puis tout regrossi de 35% à la demande —
+   plus grand ET plus "épais" (séparateurs 2px → 3px, icône Instagram
+   agrandie d'autant). Mobile/tablette gardent leurs valeurs d'origine
+   inchangées. ---- */
+@media (min-width: 1000px) {
+  .menu-overlay__logo {
+    margin: 22px 0 55px;
+  }
+  .menu-overlay__logo img {
+    height: 97px;
+  }
+  .menu-overlay__item {
+    padding-top: 42px;
+  }
+  .menu-overlay__item-title {
+    font-size: 38px;
+  }
+  .menu-overlay__item-sub {
+    font-size: 19px;
+  }
+  .menu-overlay__item-line {
+    margin-top: 11px;
+    height: 3px;
+  }
+  .menu-overlay__insta {
+    margin-top: 42px;
+    padding-top: 18px;
+    padding-bottom: 18px;
+    width: 43px;
+  }
+  .menu-overlay__insta svg {
+    width: 43px;
+    height: 43px;
   }
 }
